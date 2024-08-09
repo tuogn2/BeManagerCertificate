@@ -1,12 +1,29 @@
-const User = require('../models/User');
+const users = require("../models/User");
 
-exports.getUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+class userController { 
+  getusers(req, res, next) {
+    users
+      .find()
+      .then((user) => {
+        return res.status(200).json(user);
+      })
+      .catch((err) => res.status(500).json(err));
   }
-};
+  getuser(req, res, next) {
+    users
+      .findById(req.params.id)
+      .then((user) => {
+        const { password, ...orther } = user._doc;
+        return res.status(200).json(orther);
+      })
+      .catch((err) => res.status(500).json(err));
+  }
 
-// Add more controller methods as needed
+  
+
+  
+}
+
+module.exports = new userController();
