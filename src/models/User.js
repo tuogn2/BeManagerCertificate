@@ -5,7 +5,7 @@
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['admin', 'customer', 'guest'], default: 'customer' },
+    role: { type: String, enum: ['admin', 'customer'], default: 'customer' },
     birthday: { type: Date },
     numberphone: { type: String, trim: true },
     address: { type: String, trim: true },
