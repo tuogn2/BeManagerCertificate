@@ -1,5 +1,4 @@
 const users = require("../models/User");
-
 const bcrypt = require("bcrypt");
 class userController {
   getAlluser(req, res, next) {

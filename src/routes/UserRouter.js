@@ -5,9 +5,10 @@ const middlewareController = require("../controller/middlewareController");
 
  
 // Update user information
-route.put("/change-infor/:id",middlewareController.verifyToken, userController.updateUser);
+route.put("/change-infor/:id",middlewareController.verifyTokenUser, userController.updateUser);
 // Change user password
-route.put("/change-password/:id",middlewareController.verifyToken, userController.changePassword);
-route.get('/',middlewareController.verifyToken, userController.getAlluser);
+route.put("/change-password/:id",middlewareController.verifyTokenUser, userController.changePassword);
+route.get('/:id',middlewareController.verifyTokenUser, userController.getuser);
+route.get('/', userController.getAlluser);
 
 module.exports = route;

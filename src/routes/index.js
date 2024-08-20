@@ -1,18 +1,19 @@
 
 const UserRouter = require("./UserRouter");
 const authRouter = require("./auth");
-const userController = require("../controller/userController");
-
-function router(app){
+const OrganizationRouter = require("./OrganizationRouter");
+const OrganizationUserRouter = require("./OrganizationUserRouter");
+const CertificateRouter = require("./certificateRouter");
+const TestRouter = require("./testRouter");
+const TestAttemptRouter = require("./testAttemptRouter");
+function router(app){ 
     app.use("/api/v1/users",UserRouter);
     app.use("/api/v1/auth",authRouter);
-    // app.use("/profiles",profile);
-    // app.use("/store",store);
-    // app.use("/product",product);
-
-    
-    // app.get("/",userController.getAlluser);
-
+    app.use("/api/v1/organization",OrganizationRouter);
+    app.use("/api/v1/organization-users",OrganizationUserRouter);
+    app.use("/api/v1/certificates",CertificateRouter);
+    app.use("/api/v1/Test",TestRouter);
+    app.use("/api/v1/TestAttempt",TestAttemptRouter);
 }
  
 module.exports = router

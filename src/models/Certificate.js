@@ -1,13 +1,32 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const CertificateSchema = new mongoose.Schema({
-  title: { type: String, required: true, trim: true },
-  issueDate: { type: Date, required: true },
-  expirationDate: { type: Date },
-  issuer: { type: String, required: true },
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Hoặc 'OrganizationUser'
-  blockchainHash: { type: String, unique: true, required: true }, // Hash trên blockchain để xác thực
-  createdAt: { type: Date, default: Date.now }
+const certificateSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  organization: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Organization",
+    required: true,
+  },
+  test: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Test",
+    required: true,
+  },
+  issueDate: {
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
+  certificateId: {
+    type: String,
+    unique: true,
+    required: true,
+  },
 });
 
-module.exports = mongoose.model('Certificate', CertificateSchema);
+const Certificate = mongoose.model("Certificate", certificateSchema);
+module.exports = Certificate;
