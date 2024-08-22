@@ -16,6 +16,10 @@ const certificateSchema = new mongoose.Schema({
     ref: "Test",
     required: true,
   },
+  score: {
+    type: Number,  // Thêm trường score vào schema
+    required: true,
+  },
   issueDate: {
     type: Date,
     default: Date.now,

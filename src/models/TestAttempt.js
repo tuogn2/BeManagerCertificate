@@ -23,9 +23,20 @@ const testAttemptSchema = new mongoose.Schema({
   },
   answers: [
     {
-      questionText: String,
-      selectedOption: String,
-      isCorrect: Boolean,
+      questionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Question",
+        required: true,
+      },
+      selectedOption: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Option",
+        required: true,
+      },
+      isCorrect: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
   attemptedAt: {

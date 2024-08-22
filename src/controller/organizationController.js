@@ -3,11 +3,14 @@ const Organization = require('../models/Organization'); // Đảm bảo đườn
 class organizationController {
     // Tạo tổ chức mới
     async createOrganization(req, res) {
-        const { name, address } = req.body;
+        const { name, address, email, password, avatar } = req.body;
         try {
             const newOrganization = new Organization({
                 name,
-                address
+                address,
+                email,
+                password,
+                avatar,
             });
 
             const savedOrganization = await newOrganization.save();
@@ -21,7 +24,9 @@ class organizationController {
     // Lấy tất cả các tổ chức
     async getAllOrganizations(req, res) {
         try {
-            const organizations = await Organization.find();
+            const organizations = await Organization.find()
+                .populate('certificatesIssued')
+                .populate('testsCreated');
             return res.status(200).json(organizations);
         } catch (error) {
             console.error('Error fetching organizations:', error);
@@ -34,7 +39,9 @@ class organizationController {
         const orgId = req.params.id;
 
         try {
-            const organization = await Organization.findById(orgId);
+            const organization = await Organization.findById(orgId)
+                .populate('certificatesIssued')
+                .populate('testsCreated');
             if (!organization) {
                 return res.status(404).json({ message: 'Organization not found' });
             }
@@ -48,12 +55,12 @@ class organizationController {
     // Cập nhật tổ chức theo ID
     async updateOrganization(req, res) {
         const orgId = req.params.id;
-        const { name, address } = req.body;
+        const { name, address, email, password, avatar } = req.body;
 
         try {
             const updatedOrganization = await Organization.findByIdAndUpdate(
                 orgId,
-                { name, address },
+                { name, address, email, password, avatar },
                 { new: true } // Trả về tài liệu đã cập nhật
             );
 
@@ -67,6 +74,7 @@ class organizationController {
             return res.status(500).json({ message: 'Server error' });
         }
     }
+
     // Xóa tổ chức theo ID
     async deleteOrganization(req, res) {
         const orgId = req.params.id;

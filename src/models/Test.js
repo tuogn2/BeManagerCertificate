@@ -35,9 +35,17 @@ const testSchema = new mongoose.Schema({
       ],
     },
   ],
+  image: { // Thêm trường ảnh
+    type: String,
+    trim: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  participantsCount: {
+    type: Number,
+    default: 0, // Khởi tạo mặc định với giá trị là 0
   },
 });
 

@@ -1,25 +1,67 @@
 const TestAttempt = require("../models/TestAttempt");
-
+const Test = require("../models/Test");
 class TestAttemptController {
-    // Tạo một bài test attempt mới
+   
     async create(req, res) {
-        const { user, test, score, passed, answers } = req.body;
-
+        const { user, test, answers } = req.body;
+        
         try {
-            const testAttempt = new TestAttempt({
-                user,
-                test,
-                score,
-                passed,
-                answers,
-            });
-
-            const savedTestAttempt = await testAttempt.save();
-            res.status(201).json(savedTestAttempt);
+          // Tìm bài kiểm tra để lấy thông tin về các câu hỏi và tùy chọn đúng
+          const testDetails = await Test.findById(test);
+      
+          if (!testDetails) {
+            return res.status(404).json({ message: "Test không tìm thấy" });
+          }
+      
+          // Tổng số câu hỏi
+          const totalQuestions = testDetails.questions.length;
+          
+          let correctAnswers = 0;
+      
+          // Duyệt qua các câu hỏi của bài kiểm tra để tính điểm
+          const answerArray = testDetails.questions.map(question => {
+            const userAnswer = answers[question._id.toString()];
+            const correctOption = question.options.find(option => option.isCorrect);
+            const isCorrect = userAnswer === correctOption?._id.toString() || false;
+      
+            if (isCorrect) {
+              correctAnswers += 1; // Cộng số câu đúng nếu đáp án đúng
+            }
+      
+            return {
+              questionId: question._id,
+              selectedOption: userAnswer,
+              isCorrect,
+            };
+          });
+      
+          // Tính điểm số trên thang 100
+          const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+      
+          // Tính trạng thái đã vượt (điều kiện tùy chỉnh, ví dụ: vượt nếu đạt điểm tối thiểu)
+          const passingScore = 70; // Đặt điểm tối thiểu là 70
+          const passed = score >= passingScore;
+      
+          // Tạo bản ghi TestAttempt mới
+          const testAttempt = new TestAttempt({
+            user,
+            test,
+            score,
+            passed,
+            answers: answerArray,
+          });
+      
+          // Lưu TestAttempt vào cơ sở dữ liệu
+          const savedTestAttempt = await testAttempt.save();
+      
+          // Trả về TestAttempt đã lưu như một phản hồi
+          res.status(201).json(savedTestAttempt);
         } catch (error) {
-            res.status(400).json({ message: "Error creating test attempt", error });
+          res.status(400).json({ message: "Lỗi khi tạo thử nghiệm", error });
         }
-    }
+      }
+      
+    
 
     // Đọc thông tin về một test attempt theo ID
     async getById(req, res) {
