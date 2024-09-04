@@ -26,7 +26,8 @@ class userController {
             numberphone,
             address,
             avt,
-            certificates: []
+            certificates: [],
+            enrollments: []
         });
 
         await newUser.save();
@@ -47,7 +48,8 @@ class userController {
             address: newUser.address,
             avt: newUser.avt,
             certificates: newUser.certificates,
-            createdAt: newUser.createdAt
+            createdAt: newUser.createdAt,
+            enrollments: newUser.enrollments
         };
 
         // Return token and user information
@@ -64,7 +66,7 @@ class userController {
 
     try {
         // Check if the user exists
-        const user = await users.findOne({ email });
+        const user = await users.findOne({ email }).populate('certificates').populate('enrollments');
         if (!user) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
@@ -82,6 +84,8 @@ class userController {
             { expiresIn: '350d' }
         );
 
+
+        
         // Exclude the password before sending user information
         const userInfo = {
             id: user._id,
@@ -93,7 +97,8 @@ class userController {
             address: user.address,
             avt: "avt.jpg",
             certificates: user.certificates,
-            createdAt: user.createdAt
+            createdAt: user.createdAt,
+            enrollments: user.enrollments
         };
 
         // Return token and user information

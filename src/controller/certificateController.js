@@ -1,94 +1,83 @@
 const Certificate = require("../models/Certificate");
 const User = require("../models/User");
-const { v4: uuidv4 } = require("uuid");
+const { v4: uuidv4 } = require('uuid');
+
 const createCertificateImage = require("../utils/createCertificateImage");
-// const User = require('./models/User'); // Đảm bảo đường dẫn chính xác
-const Organization = require('../models/Organization'); // Đảm bảo đường dẫn đúng đến mô hình Organization
-const Test = require("../models/Test");
+const QuizResult = require("../models/quizResult");
+const Course = require("../models/Course");
+
+const Organization = require("../models/Organization");
+
 class CertificateController {
-  // Tạo một certificate mới
-  //   async create(req, res) {
-  //     const { user, organization, test, score } = req.body;
+  async create(req, res) {
+    const {
+      user: userId,
+      organization: organizationId,
+      course: courseId,
+      score,
+    } = req.body;
 
-  //     try {
-  //       // Tạo chứng chỉ với certificateId tự động
-  //       const certificate = new Certificate({
-  //         user,
-  //         organization,
-  //         test,
-  //         certificateId: uuidv4(), // Tạo ID duy nhất cho certificateId
-  //         score,  // Thêm điểm số vào chứng chỉ
-  //       });
-
-  //       const savedCertificate = await certificate.save();
-
-  //       // Cập nhật user với chứng chỉ mới
-  //       await User.findByIdAndUpdate(user, {
-  //         $push: { certificates: savedCertificate._id }
-  //       });
-
-  //       res.status(201).json(savedCertificate);
-  //     } catch (error) {
-  //       res.status(400).json({ message: 'Error creating certificate', error });
-  //     }
-  //   }
-  async  create(req, res) {
-    const { user: userId, organization: organizationId, test: testId, score } = req.body;
-  
     try {
-      // Lấy thông tin người dùng, tổ chức và bài kiểm tra từ cơ sở dữ liệu
+      // Fetch the user, organization, and course from the database
       const user = await User.findById(userId);
       const organization = await Organization.findById(organizationId);
-      const test = await Test.findById(testId);
-  
-      if (!user || !organization || !test) {
-        return res.status(404).json({ message: "User, Organization, or Test not found" });
+      const course = await Course.findById(courseId);
+
+      if (!user || !organization || !course) {
+        return res
+          .status(404)
+          .json({ message: "User, Organization, or Course not found" });
       }
-  
-      // Tạo chứng chỉ trong cơ sở dữ liệu
+
+      // Create a new certificate
       const certificate = new Certificate({
         user: userId,
         organization: organizationId,
-        test: testId,
-        certificateId: uuidv4(), // Tạo UUID cho chứng chỉ
+        course: courseId,
+        certificateId: uuidv4(), // Generate a UUID for the certificate
         score,
       });
-  
+
       const savedCertificate = await certificate.save();
-  
-      // Tạo ảnh chứng chỉ và tải lên Cloudinary
+
+      // Generate certificate image and upload to Cloudinary
       const certificateImageUrl = await createCertificateImage({
-        userName: user.name, // Sử dụng tên người dùng thực tế
-        organizationName: organization.name, // Sử dụng tên tổ chức thực tế
-        testName: test.title, // Sử dụng tên bài kiểm tra thực tế
+        userName: user.name,
+        organizationName: organization.name,
+        courseName: course.title,
         score: score,
       });
-  
-      // Cập nhật URL chứng chỉ vào cơ sở dữ liệu
+
+      // Update the certificate with the image URL
       savedCertificate.imageUrl = certificateImageUrl;
       await savedCertificate.save();
-  
-      // Trả về thông tin chứng chỉ và URL ảnh
+
+      // Return the saved certificate and image URL
       res.status(201).json({
         certificate: savedCertificate,
         imageUrl: certificateImageUrl,
       });
     } catch (error) {
+      console.error("Error creating certificate:", error);
       res.status(400).json({ message: "Error creating certificate", error });
     }
   }
+
   // Đọc thông tin về một certificate theo ID
   async getById(req, res) {
     try {
       const certificate = await Certificate.findById(req.params.id)
         .populate("user")
         .populate("organization")
-        .populate("test");
+        .populate("course");
+
       if (!certificate) {
         return res.status(404).json({ message: "Certificate not found" });
       }
+
       res.status(200).json(certificate);
     } catch (error) {
+      console.error("Error retrieving certificate:", error);
       res.status(500).json({ message: "Error retrieving certificate", error });
     }
   }
@@ -99,9 +88,11 @@ class CertificateController {
       const certificates = await Certificate.find()
         .populate("user")
         .populate("organization")
-        .populate("test");
+        .populate("course");
+
       res.status(200).json(certificates);
     } catch (error) {
+      console.error("Error retrieving certificates:", error);
       res.status(500).json({ message: "Error retrieving certificates", error });
     }
   }
@@ -123,6 +114,7 @@ class CertificateController {
 
       res.status(200).json(updatedCertificate);
     } catch (error) {
+      console.error("Error updating certificate:", error);
       res.status(400).json({ message: "Error updating certificate", error });
     }
   }
@@ -137,9 +129,9 @@ class CertificateController {
       if (!deletedCertificate) {
         return res.status(404).json({ message: "Certificate not found" });
       }
-
       res.status(200).json({ message: "Certificate deleted successfully" });
     } catch (error) {
+      console.error("Error deleting certificate:", error);
       res.status(500).json({ message: "Error deleting certificate", error });
     }
   }

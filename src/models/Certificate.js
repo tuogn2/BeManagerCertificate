@@ -11,13 +11,13 @@ const certificateSchema = new mongoose.Schema({
     ref: "Organization",
     required: true,
   },
-  test: {
+  course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Test",
+    ref: "Course", // Liên kết với mô hình Course
     required: true,
   },
   score: {
-    type: Number,  // Thêm trường score vào schema
+    type: Number,  // Điểm số của bài test
     required: true,
   },
   issueDate: {
@@ -29,6 +29,10 @@ const certificateSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
+  },
+  imageUrl: {
+    type: String, // Thêm trường imageUrl để lưu liên kết ảnh
+    trim: true,
   },
 });
 

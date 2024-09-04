@@ -4,22 +4,30 @@ class userController {
   getAlluser(req, res, next) {
     users
       .find()
-      .select('-password') // Loại trừ trường 'password'
+      .select("-password") // Loại trừ trường 'password'
       .then((user) => {
         return res.status(200).json(user); // Trả về danh sách người dùng (không có mật khẩu) dưới dạng JSON
       })
       .catch((err) => res.status(500).json(err)); // Nếu có lỗi xảy ra, trả về mã 500 cùng với lỗi
-}
+  }
 
+  async getuser(req, res, next) {
+    try {
+      const user = await users.findById(req.params.id).populate("enrollments"); // Populate trường enrollments
 
-  getuser(req, res, next) {
-    users
-      .findById(req.params.id)
-      .then((user) => {
-        const { password, ...orther } = user._doc;
-        return res.status(200).json(orther);
-      })
-      .catch((err) => res.status(500).json(err));
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Loại bỏ trường password khỏi kết quả trả về
+      const { password, ...other } = user._doc;
+
+      return res.status(200).json(other);
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: err.message });
+    }
   }
 
   updateUser(req, res, next) {
