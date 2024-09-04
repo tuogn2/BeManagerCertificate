@@ -52,6 +52,10 @@ class CertificateController {
       savedCertificate.imageUrl = certificateImageUrl;
       await savedCertificate.save();
 
+      user.certificates.push(savedCertificate._id);
+      await user.save();
+      
+
       // Return the saved certificate and image URL
       res.status(201).json({
         certificate: savedCertificate,
