@@ -41,7 +41,7 @@ class organizationController {
         try {
             const organization = await Organization.findById(orgId)
                 .populate('certificatesIssued')
-                .populate('testsCreated');
+                
             if (!organization) {
                 return res.status(404).json({ message: 'Organization not found' });
             }

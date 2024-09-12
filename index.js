@@ -18,6 +18,11 @@ app.use(express.json())
 app.use(express.static(path.join(__dirname, 'src/public')));
 console.log(__dirname)
 app.use(morgan("combined"));  
+
+
+
+
+
 app.use(cors(
   {
       // origin: process.env.DEV == 1 ? 'http://localhost:3000' : [`http://${process.env.HOST}`, `https://${process.env.HOST}`],

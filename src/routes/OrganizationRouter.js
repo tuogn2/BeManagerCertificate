@@ -9,7 +9,7 @@ router.post('/', organizationController.createOrganization);
 router.get('/', organizationController.getAllOrganizations);
 
 // Route lấy tổ chức theo ID
-router.get('/:id', organizationController.getOrganizationById);
+router.get('/:id', organizationController.getOrganizationById); 
 
 // Route cập nhật tổ chức theo ID
 router.put('/:id', organizationController.updateOrganization);

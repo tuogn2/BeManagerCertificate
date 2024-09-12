@@ -27,7 +27,7 @@ class userController {
             address,
             avt,
             certificates: [],
-            enrollments: []
+            enrollments: [],
         });
 
         await newUser.save();
@@ -98,7 +98,7 @@ class userController {
             avt: "avt.jpg",
             certificates: user.certificates,
             createdAt: user.createdAt,
-            enrollments: user.enrollments
+            enrollments: user.enrollments,
         };
 
         // Return token and user information

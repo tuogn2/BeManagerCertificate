@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
   avt: { type: String },  // Lưu đường dẫn tới ảnh đại diện
   createdAt: { type: Date, default: Date.now },
   certificates: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Certificate' }],
-  enrollments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Enrollment' }] // Các đăng ký của người dùng// Các bộ khóa học đã tham gia
+  enrollments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Enrollment' }], // Các đăng ký của người dùng// Các bộ khóa học đã tham gia
 });
 
 module.exports = mongoose.model('User', UserSchema);

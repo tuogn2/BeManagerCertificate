@@ -1,12 +1,14 @@
 const Certificate = require("../models/Certificate");
 const User = require("../models/User");
-const { v4: uuidv4 } = require('uuid');
-
-const createCertificateImage = require("../utils/createCertificateImage");
 const QuizResult = require("../models/quizResult");
 const Course = require("../models/Course");
 
 const Organization = require("../models/Organization");
+const { v4: uuidv4 } = require("uuid");
+
+const createCertificateImage = require("../utils/createCertificateImage");
+
+const { web3, contract } = require("../../contract");
 
 class CertificateController {
   async create(req, res) {
@@ -54,7 +56,20 @@ class CertificateController {
 
       user.certificates.push(savedCertificate._id);
       await user.save();
-      
+
+      // Gọi hợp đồng thông minh để cập nhật chứng chỉ trên blockchain
+
+      await contract.methods
+        .addCertificateDetails(
+          courseId, // ID khóa học (courseId từ MongoDB)
+          userId, // ID sinh viên (userId từ MongoDB)
+          "thisishash", // Hash của chứng chỉ (nếu có, có thể là một hash duy nhất được tạo dựa trên thông tin chứng chỉ)
+          score, // Điểm số của sinh viên
+          savedCertificate.certificateId, // ID chứng chỉ (UUID được tạo trong MongoDB)
+          certificateImageUrl, // URL của ảnh chứng chỉ (được tải lên Cloudinary)
+          true // Trạng thái hoàn thành khóa học
+        )
+        .send({ from: web3.eth.defaultAccount }); // Địa chỉ ví Ethereum thực hiện giao dịch
 
       // Return the saved certificate and image URL
       res.status(201).json({
