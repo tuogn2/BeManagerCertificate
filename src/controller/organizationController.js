@@ -26,7 +26,6 @@ class organizationController {
         try {
             const organizations = await Organization.find()
                 .populate('certificatesIssued')
-                .populate('testsCreated');
             return res.status(200).json(organizations);
         } catch (error) {
             console.error('Error fetching organizations:', error);
