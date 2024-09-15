@@ -31,18 +31,13 @@ const OrganizationSchema = new mongoose.Schema({
       ref: "Certificate",
     },
   ],
-  // testsCreated: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Test",
-  //   },
-  // ], // Các bài test mà tổ chức đã tạo
+ 
   courseBundles: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "CourseBundle",
     },
-  ] // Các bộ khóa học mà tổ chức đã tạo
+  ] 
 });
 
 module.exports = mongoose.model("Organization", OrganizationSchema);

@@ -1,16 +1,41 @@
 const Organization = require('../models/Organization'); // Đảm bảo đường dẫn đúng đến mô hình Organization
+const bcrypt = require('bcryptjs');
+const cloudinary = require('cloudinary').v2;
 
-class organizationController {
+class OrganizationController {
     // Tạo tổ chức mới
     async createOrganization(req, res) {
-        const { name, address, email, password, avatar } = req.body;
+        const { name, address, email, password } = req.body;
+        const avatar = req.file; // Lấy tệp từ req.file
         try {
+            // Kiểm tra nếu email đã tồn tại
+            const existingOrganization = await Organization.findOne({ email });
+            if (existingOrganization) {
+                return res.status(400).json({ message: 'Email already exists' });
+            }
+
+            // Hash mật khẩu trước khi lưu
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            let avatarUrl = null;
+            if (avatar) {
+                // Tải tệp lên Cloudinary
+                const result = await new Promise((resolve, reject) => {
+                    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                        if (error) reject(error);
+                        resolve(result);
+                    }).end(avatar.buffer);
+                });
+                
+                avatarUrl = result.secure_url; // Lấy URL của tệp
+            }
+
             const newOrganization = new Organization({
                 name,
                 address,
                 email,
-                password,
-                avatar,
+                password: hashedPassword,
+                avatar: avatarUrl, // Lưu URL của ảnh
             });
 
             const savedOrganization = await newOrganization.save();
@@ -25,7 +50,7 @@ class organizationController {
     async getAllOrganizations(req, res) {
         try {
             const organizations = await Organization.find()
-                .populate('certificatesIssued')
+                .populate('certificatesIssued');
             return res.status(200).json(organizations);
         } catch (error) {
             console.error('Error fetching organizations:', error);
@@ -39,7 +64,7 @@ class organizationController {
 
         try {
             const organization = await Organization.findById(orgId)
-                .populate('certificatesIssued')
+                .populate('certificatesIssued');
                 
             if (!organization) {
                 return res.status(404).json({ message: 'Organization not found' });
@@ -54,12 +79,33 @@ class organizationController {
     // Cập nhật tổ chức theo ID
     async updateOrganization(req, res) {
         const orgId = req.params.id;
-        const { name, address, email, password, avatar } = req.body;
+        const { name, address, email, password } = req.body;
+        const avatar = req.file; // Lấy tệp từ req.file
 
         try {
+            // Nếu có mật khẩu mới, hash nó trước khi lưu
+            let updateData = { name, address, email };
+            if (password) {
+                updateData.password = await bcrypt.hash(password, 10);
+            }
+
+            let avatarUrl = null;
+            if (avatar) {
+                // Tải tệp lên Cloudinary
+                const result = await new Promise((resolve, reject) => {
+                    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                        if (error) reject(error);
+                        resolve(result);
+                    }).end(avatar.buffer);
+                });
+                
+                avatarUrl = result.secure_url; // Lấy URL của tệp
+                updateData.avatar = avatarUrl; // Cập nhật URL của ảnh
+            }
+
             const updatedOrganization = await Organization.findByIdAndUpdate(
                 orgId,
-                { name, address, email, password, avatar },
+                updateData,
                 { new: true } // Trả về tài liệu đã cập nhật
             );
 
@@ -91,9 +137,6 @@ class organizationController {
             return res.status(500).json({ message: 'Server error' });
         }
     }
-
-   
-    
 }
 
-module.exports = new organizationController();
+module.exports = new OrganizationController();
