@@ -114,10 +114,11 @@ class EnrollmentController {
 
   async getEnrollmentsByUser(req, res) {
     const userId = req.params.userId;
+     console.log(userId);
 
     try {
       // Find all enrollments for the user
-      const enrollments = await Enrollment.find({ userId: userId });
+      const enrollments = await Enrollment.find({ user: userId }).populate('course');
 
       if (!enrollments || enrollments.length === 0) {
         return res

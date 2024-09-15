@@ -5,6 +5,7 @@ const upload = require('../middleware/upload'); // Import middleware upload
 
 // Tạo mới khóa học (với hình ảnh)
 router.post('/', upload.single('image'), courseController.create);
+router.get('/search', courseController.search);
 
 // Lấy tất cả khóa học
 router.get('/', courseController.getAll);
@@ -17,5 +18,6 @@ router.put('/:id', upload.single('image'), courseController.update);
 
 // Xóa khóa học theo ID
 router.delete('/:id', courseController.delete);
+
 
 module.exports = router;

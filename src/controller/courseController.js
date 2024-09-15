@@ -170,6 +170,26 @@ class CourseController {
             return res.status(500).json({ message: 'Server error' });
         }
     }
+
+
+   // src/controller/CourseController.js
+    async  search(req, res) {
+    try {
+      const query = req.query.query; // Lấy từ khóa tìm kiếm từ query string
+      if (!query) {
+        return res.status(400).json({ message: 'Query parameter is required' });
+      }
+  
+      const courses = await Course.find({
+        title: { $regex: query, $options: 'i' } // Tìm kiếm không phân biệt chữ hoa chữ thường
+      });
+  
+      res.json(courses);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+    }
+  
 }
 
 module.exports = new CourseController();
