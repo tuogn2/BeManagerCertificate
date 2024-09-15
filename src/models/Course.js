@@ -61,6 +61,10 @@ const courseSchema = new mongoose.Schema({
     type: Number,
     default: 0, // Khởi tạo mặc định với giá trị là 0
   },
+  isActive: {
+    type: Boolean,
+    default: false, // Mặc định là false
+  },
 });
 
 module.exports = mongoose.model('Course', courseSchema);
