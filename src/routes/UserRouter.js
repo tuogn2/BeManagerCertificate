@@ -3,13 +3,124 @@ const route = express.Router();
 const userController = require("../controller/userController");
 const middlewareController = require("../controller/middlewareController");
 
- 
-// Update user information
-// route.post('/link-wallet', userController.linkWallet);
-route.put("/change-infor/:id",middlewareController.verifyTokenUser, userController.updateUser);
-// Change user password
-route.put("/change-password/:id",middlewareController.verifyTokenUser, userController.changePassword);
-route.get('/:id',middlewareController.verifyTokenUser, userController.getuser);
-// route.post('/check-wallet', userController.checkwallet);
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: API endpoints for managing users
+ */
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get all users (excluding passwords)
+ *     responses:
+ *       200:
+ *         description: List of all users
+ *       500:
+ *         description: Server error
+ */
 route.get('/', userController.getAlluser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get a user by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User details
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+route.get('/:id', middlewareController.verifyTokenUser, userController.getuser);
+
+/**
+ * @swagger
+ * /users/change-infor/{id}:
+ *   put:
+ *     tags: [Users]
+ *     summary: Update user information
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               birthday:
+ *                 type: string
+ *               numberphone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               avt:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User information updated successfully
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+route.put("/change-infor/:id", middlewareController.verifyTokenUser, userController.updateUser);
+
+/**
+ * @swagger
+ * /users/change-password/{id}:
+ *   put:
+ *     tags: [Users]
+ *     summary: Change user password
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Incorrect current password
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+route.put("/change-password/:id", middlewareController.verifyTokenUser, userController.changePassword);
+
 module.exports = route;

@@ -2,19 +2,160 @@ const express = require("express");
 const router = express.Router();
 const certificateController = require("../controller/certificateController");
 
-// Route để tạo một certificate mới
+/**
+ * @openapi
+ * /api/certificates:
+ *   post:
+ *     summary: Create a new certificate
+ *     tags:
+ *       - Certificates
+ *     requestBody:
+ *       description: Information needed to create a certificate
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user:
+ *                 type: string
+ *                 description: The ID of the user
+ *                 example: "60d21babd9d3c9f7b230f2b4"
+ *               organization:
+ *                 type: string
+ *                 description: The ID of the organization
+ *                 example: "60d21babd9d3c9f7b230f2b5"
+ *               course:
+ *                 type: string
+ *                 description: The ID of the course
+ *                 example: "60d21babd9d3c9f7b230f2b6"
+ *               score:
+ *                 type: number
+ *                 description: The score achieved by the user
+ *                 example: 95
+ *     responses:
+ *       201:
+ *         description: Certificate created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 certificate:
+ *                   type: object
+ *                   description: The created certificate
+ *                 imageUrl:
+ *                   type: string
+ *                   description: URL of the certificate image
+ *       404:
+ *         description: User, Organization, or Course not found
+ *       400:
+ *         description: Error creating certificate
+ */
 router.post("/", certificateController.create);
 
-// Route để lấy thông tin về một certificate theo ID
+/**
+ * @openapi
+ * /api/certificates/{id}:
+ *   get:
+ *     summary: Retrieve a certificate by ID
+ *     tags:
+ *       - Certificates
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the certificate
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Certificate details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       404:
+ *         description: Certificate not found
+ */
 router.get("/:id", certificateController.getById);
 
-// Route để lấy tất cả các certificates
+/**
+ * @openapi
+ * /api/certificates:
+ *   get:
+ *     summary: Retrieve all certificates
+ *     tags:
+ *       - Certificates
+ *     responses:
+ *       200:
+ *         description: List of certificates
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ */
 router.get("/", certificateController.getAll);
 
-// Route để cập nhật một certificate theo ID
+/**
+ * @openapi
+ * /api/certificates/{id}:
+ *   put:
+ *     summary: Update a certificate by ID
+ *     tags:
+ *       - Certificates
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the certificate to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: New certificate information
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               certificateId:
+ *                 type: string
+ *                 description: New certificate ID
+ *     responses:
+ *       200:
+ *         description: Certificate updated successfully
+ *       404:
+ *         description: Certificate not found
+ *       400:
+ *         description: Error updating certificate
+ */
 router.put("/:id", certificateController.update);
 
-// Route để xóa một certificate theo ID
+/**
+ * @openapi
+ * /api/certificates/{id}:
+ *   delete:
+ *     summary: Delete a certificate by ID
+ *     tags:
+ *       - Certificates
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the certificate to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Certificate deleted successfully
+ *       404:
+ *         description: Certificate not found
+ *       500:
+ *         description: Error deleting certificate
+ */
 router.delete("/:id", certificateController.delete);
 
 module.exports = router;

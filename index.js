@@ -11,6 +11,8 @@ const router = require("./src/routes/index.js");
 const cloudinary = require('cloudinary').v2;
 const upload = require('./src/middleware/upload.js');
 
+
+const { swaggerUi, swaggerDocs } = require('./src/configs/swagger.js');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -25,7 +27,7 @@ app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
 }));
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 cloudinary.config({
     cloud_name: 'drjoyphxe',
     api_key: '837168631483714',
