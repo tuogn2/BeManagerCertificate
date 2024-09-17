@@ -260,6 +260,42 @@ router.post('/', upload.single('image'), courseController.create);
  */
 router.get('/', courseController.getAll);
 
+/**
+ * @openapi
+ * /api/courses/{id}/activate:
+ *   put:
+ *     summary: Change course isActive status to true
+ *     tags:
+ *       - Courses
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the course to activate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "60d21babd9d3c9f7b230f2b6"
+ *     responses:
+ *       200:
+ *         description: Course activated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Course activated successfully"
+ *                 course:
+ *                   $ref: '#/components/schemas/Course'
+ *       404:
+ *         description: Course not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/:id/activate', courseController.changeActiveToTrue);
+
+
 
 
 module.exports = router;

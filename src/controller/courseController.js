@@ -242,6 +242,30 @@ class CourseController {
       return res.status(500).json({ message: "Server error" });
     }
   }
+
+
+  async changeActiveToTrue(req, res) {
+    const courseId = req.params.id;
+  
+    try {
+      // Find the course by ID and update isActive to true
+      const updatedCourse = await Course.findByIdAndUpdate(
+        courseId,
+        { isActive: true },
+        { new: true } // Return the updated document
+      );
+  
+      if (!updatedCourse) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+  
+      return res.status(200).json({ message: "Course activated successfully", course: updatedCourse });
+    } catch (error) {
+      console.error("Error activating course:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+  
 }
 
 module.exports = new CourseController();
