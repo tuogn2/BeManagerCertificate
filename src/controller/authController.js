@@ -1,4 +1,5 @@
 const users = require("../models/User");
+const Organization = require('../models/Organization');
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -61,53 +62,105 @@ class userController {
     }
   }
 
-  async  login(req, res) {
+//   async  login(req, res) {
+//     const { email, password } = req.body;
+
+//     try {
+//         // Check if the user exists
+//         const user = await users.findOne({ email }).populate('certificates').populate('enrollments');
+//         if (!user) {
+//             return res.status(400).json({ message: 'Invalid email or password' });
+//         }
+
+//         // Validate the password
+//         const isMatch = await bcrypt.compare(password, user.password);
+//         if (!isMatch) {
+//             return res.status(400).json({ message: 'Invalid email or password' });
+//         }
+
+//         // Generate JWT token
+//         const token = jwt.sign(
+//             { userId: user._id, role: user.role },
+//             process.env.JWT_Access_Key,
+//             { expiresIn: '350d' }
+//         );
+
+
+        
+//         // Exclude the password before sending user information
+//         const userInfo = {
+//             id: user._id,
+//             name: user.name,
+//             email: user.email,
+//             role: user.role,
+//             birthday: user.birthday,
+//             numberphone: user.numberphone,
+//             address: user.address,
+//             avt: user.avt,
+//             certificates: user.certificates,
+//             createdAt: user.createdAt,
+//             enrollments: user.enrollments,
+//         };
+
+//         // Return token and user information
+//         return res.status(200).json({ token, user: userInfo, message: 'Login successful' });
+
+//     } catch (error) {
+//         console.error('Login error:', error);
+//         res.status(500).json({ message: 'Server error' });
+//     }}
+async login(req, res) {
     const { email, password } = req.body;
 
     try {
-        // Check if the user exists
-        const user = await users.findOne({ email }).populate('certificates').populate('enrollments');
+        // Kiểm tra email có tồn tại trong bảng người dùng hay không
+        let user = await users.findOne({ email }).populate('certificates').populate('enrollments');
+        
+        // Nếu không có người dùng, tiếp tục kiểm tra tổ chức
         if (!user) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            user = await Organization.findOne({ email }).populate('certificatesIssued').populate('courseBundles');
+            
+            // Nếu không tìm thấy tổ chức, trả về lỗi
+            if (!user) {
+                return res.status(400).json({ message: 'Email hoặc mật khẩu không hợp lệ' });
+            }
         }
 
-        // Validate the password
+        // Kiểm tra mật khẩu
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            return res.status(400).json({ message: 'Email hoặc mật khẩu không hợp lệ' });
         }
 
-        // Generate JWT token
+        // Tạo JWT token
         const token = jwt.sign(
-            { userId: user._id, role: user.role },
+            { userId: user._id, role: user.role  },
             process.env.JWT_Access_Key,
             { expiresIn: '350d' }
         );
 
-
-        
-        // Exclude the password before sending user information
+        // Loại bỏ mật khẩu trước khi gửi thông tin người dùng/tổ chức
         const userInfo = {
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role,
-            birthday: user.birthday,
-            numberphone: user.numberphone,
+            role: user.role ,
             address: user.address,
             avt: user.avt,
-            certificates: user.certificates,
+            certificates: user.certificates || user.certificatesIssued,
             createdAt: user.createdAt,
-            enrollments: user.enrollments,
+            enrollments: user.enrollments || user.courseBundles,
         };
 
-        // Return token and user information
-        return res.status(200).json({ token, user: userInfo, message: 'Login successful' });
+        // Trả về token và thông tin người dùng/tổ chức
+        return res.status(200).json({ token, user: userInfo, message: 'Đăng nhập thành công' });
 
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error' });
-    }}
+        console.error('Lỗi đăng nhập:', error);
+        res.status(500).json({ message: 'Lỗi máy chủ' });
+    }
+}
+
 }
 
 module.exports = new userController();
