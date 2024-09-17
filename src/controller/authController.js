@@ -95,7 +95,7 @@ class userController {
             birthday: user.birthday,
             numberphone: user.numberphone,
             address: user.address,
-            avt: "avt.jpg",
+            avt: user.avt,
             certificates: user.certificates,
             createdAt: user.createdAt,
             enrollments: user.enrollments,

@@ -226,8 +226,6 @@ class CourseController {
     }
   }
   
-
-
   async getInactiveCourses(req, res) {
     try {
       const inactiveCourses = await Course.find({ isActive: false }).populate(
