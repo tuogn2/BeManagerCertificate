@@ -3,76 +3,6 @@ const router = express.Router();
 const courseController = require('../controller/CourseController'); // Đảm bảo đường dẫn đúng
 const upload = require('../middleware/upload'); // Import middleware upload
 
-/**
- * @openapi
- * /api/courses:
- *   post:
- *     summary: Create a new course
- *     tags:
- *       - Courses
- *     requestBody:
- *       description: Course information
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: Title of the course
- *                 example: "Introduction to JavaScript"
- *               description:
- *                 type: string
- *                 description: Description of the course
- *                 example: "Learn the basics of JavaScript programming."
- *               organization:
- *                 type: string
- *                 description: ID of the organization offering the course
- *                 example: "60d21babd9d3c9f7b230f2b6"
- *               price:
- *                 type: number
- *                 description: Price of the course
- *                 example: 99.99
- *               finalQuiz:
- *                 type: object
- *                 description: Final quiz object
- *                 properties:
- *                   questions:
- *                     type: array
- *                     items:
- *                       type: object
- *                       properties:
- *                         questionText:
- *                           type: string
- *                           description: Text of the question
- *                           example: "What is JavaScript?"
- *                         options:
- *                           type: array
- *                           items:
- *                             type: object
- *                             properties:
- *                               text:
- *                                 type: string
- *                                 description: Option text
- *                                 example: "A programming language"
- *                         correctAnswer:
- *                           type: string
- *                           description: Correct answer text
- *                           example: "A programming language"
- *               image:
- *                 type: string
- *                 format: binary
- *                 description: Course image
- *     responses:
- *       201:
- *         description: Course created successfully
- *       400:
- *         description: Invalid input
- *       500:
- *         description: Server error
- */
-router.post('/', upload.single('image'), courseController.create);
 
 /**
  * @openapi
@@ -101,18 +31,21 @@ router.get('/search', courseController.search);
 
 /**
  * @openapi
- * /api/courses:
+ * /api/courses/inactive:
  *   get:
- *     summary: Get all courses
+ *     summary: Get inactive courses
  *     tags:
  *       - Courses
+ *     description: Retrieve all courses where isActive is false
  *     responses:
  *       200:
- *         description: List of all courses
+ *         description: List of inactive courses
+ *       404:
+ *         description: No inactive courses found
  *       500:
  *         description: Server error
  */
-router.get('/', courseController.getAll);
+router.get('/inactive', courseController.getInactiveCourses);
 
 /**
  * @openapi
@@ -242,5 +175,91 @@ router.put('/:id', upload.single('image'), courseController.update);
  *         description: Server error
  */
 router.delete('/:id', courseController.delete);
+/**
+ * @openapi
+ * /api/courses:
+ *   post:
+ *     summary: Create a new course
+ *     tags:
+ *       - Courses
+ *     requestBody:
+ *       description: Course information
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Title of the course
+ *                 example: "Introduction to JavaScript"
+ *               description:
+ *                 type: string
+ *                 description: Description of the course
+ *                 example: "Learn the basics of JavaScript programming."
+ *               organization:
+ *                 type: string
+ *                 description: ID of the organization offering the course
+ *                 example: "60d21babd9d3c9f7b230f2b6"
+ *               price:
+ *                 type: number
+ *                 description: Price of the course
+ *                 example: 99.99
+ *               finalQuiz:
+ *                 type: object
+ *                 description: Final quiz object
+ *                 properties:
+ *                   questions:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         questionText:
+ *                           type: string
+ *                           description: Text of the question
+ *                           example: "What is JavaScript?"
+ *                         options:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               text:
+ *                                 type: string
+ *                                 description: Option text
+ *                                 example: "A programming language"
+ *                         correctAnswer:
+ *                           type: string
+ *                           description: Correct answer text
+ *                           example: "A programming language"
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Course image
+ *     responses:
+ *       201:
+ *         description: Course created successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
+router.post('/', upload.single('image'), courseController.create);
+/**
+ * @openapi
+ * /api/courses:
+ *   get:
+ *     summary: Get all courses
+ *     tags:
+ *       - Courses
+ *     responses:
+ *       200:
+ *         description: List of all courses
+ *       500:
+ *         description: Server error
+ */
+router.get('/', courseController.getAll);
+
+
 
 module.exports = router;

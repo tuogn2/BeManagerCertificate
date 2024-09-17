@@ -99,15 +99,27 @@ class CourseController {
   
 
   // Lấy tất cả các khóa học
+  // async getAll(req, res) {
+  //   try {
+  //     const courses = await Course.find().populate("organization"); // Tùy chỉnh nếu cần
+  //     return res.status(200).json(courses);
+  //   } catch (error) {
+  //     console.error("Error fetching courses:", error);
+  //     return res.status(500).json({ message: "Server error" });
+  //   }
+  // }
+
   async getAll(req, res) {
     try {
-      const courses = await Course.find().populate("organization"); // Tùy chỉnh nếu cần
+      // Find courses where isActive is true
+      const courses = await Course.find({ isActive: true }).populate("organization"); // Adjust if necessary
       return res.status(200).json(courses);
     } catch (error) {
       console.error("Error fetching courses:", error);
       return res.status(500).json({ message: "Server error" });
     }
   }
+  
 
   // Lấy khóa học theo ID
   async getById(req, res) {
@@ -210,6 +222,24 @@ class CourseController {
       res.json(courses);
     } catch (error) {
       res.status(500).json({ message: error.message });
+    }
+  }
+
+
+  async getInactiveCourses(req, res) {
+    try {
+      const inactiveCourses = await Course.find({ isActive: false }).populate(
+        "organization"
+      );
+      
+      if (!inactiveCourses || inactiveCourses.length === 0) {
+        return res.status(404).json({ message: "No inactive courses found" });
+      }
+
+      return res.status(200).json(inactiveCourses);
+    } catch (error) {
+      console.error("Error fetching inactive courses:", error);
+      return res.status(500).json({ message: "Server error" });
     }
   }
 }
