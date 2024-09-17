@@ -214,16 +214,18 @@ class CourseController {
       if (!query) {
         return res.status(400).json({ message: "Query parameter is required" });
       }
-
+  
       const courses = await Course.find({
         title: { $regex: query, $options: "i" }, // Tìm kiếm không phân biệt chữ hoa chữ thường
+        isActive: true // Chỉ tìm các khóa học có isActive = true
       });
-
+  
       res.json(courses);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   }
+  
 
 
   async getInactiveCourses(req, res) {
