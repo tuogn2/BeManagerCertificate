@@ -158,4 +158,36 @@ router.put("/:id", certificateController.update);
  */
 router.delete("/:id", certificateController.delete);
 
+/**
+ * @openapi
+ * /api/certificates/student/{studentId}:
+ *   get:
+ *     summary: Retrieve certificates by student ID
+ *     tags:
+ *       - Certificates
+ *     parameters:
+ *       - name: studentId
+ *         in: path
+ *         required: true
+ *         description: ID of the student (user)
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of certificates for the student
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       404:
+ *         description: No certificates found for the student
+ *       500:
+ *         description: Error retrieving certificates
+ */
+router.get("/student/:studentId", certificateController.getByStudentId);
+
+
+
 module.exports = router;

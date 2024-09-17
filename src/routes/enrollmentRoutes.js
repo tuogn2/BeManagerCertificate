@@ -4,11 +4,11 @@ const enrollmentController = require('../controller/EnrollmentController');
 
 /**
  * @openapi
- * /api/enrollments:
+ * /api/enrollment:
  *   post:
  *     summary: Create a new enrollment
  *     tags:
- *       - Enrollments
+ *       - Enrollment
  *     requestBody:
  *       description: Enrollment information
  *       required: true
@@ -43,7 +43,7 @@ router.post('/', enrollmentController.create);
 
 /**
  * @openapi
- * /api/enrollments:
+ * /api/enrollment:
  *   get:
  *     summary: Get all enrollments
  *     tags:
@@ -58,11 +58,11 @@ router.get('/', enrollmentController.getAll);
 
 /**
  * @openapi
- * /api/enrollments/{id}:
+ * /api/enrollment/{id}:
  *   get:
  *     summary: Get enrollment by ID
  *     tags:
- *       - Enrollments
+ *       - Enrollment
  *     parameters:
  *       - name: id
  *         in: path
@@ -83,11 +83,11 @@ router.get('/:id', enrollmentController.getById);
 
 /**
  * @openapi
- * /api/enrollments/{id}:
+ * /api/enrollment/{id}:
  *   put:
  *     summary: Update enrollment by ID
  *     tags:
- *       - Enrollments
+ *       - Enrollment
  *     parameters:
  *       - name: id
  *         in: path
@@ -132,11 +132,11 @@ router.put('/:id', enrollmentController.update);
 
 /**
  * @openapi
- * /api/enrollments/{id}:
+ * /api/enrollment/{id}:
  *   delete:
  *     summary: Delete enrollment by ID
  *     tags:
- *       - Enrollments
+ *       - Enrollment
  *     parameters:
  *       - name: id
  *         in: path
@@ -157,11 +157,11 @@ router.delete('/:id', enrollmentController.delete);
 
 /**
  * @openapi
- * /api/enrollments/user/{userId}:
+ * /api/enrollment/user/{userId}:
  *   get:
- *     summary: Get all enrollments for a specific user
+ *     summary: Get all enrollment for a specific user
  *     tags:
- *       - Enrollments
+ *       - Enrollment
  *     parameters:
  *       - name: userId
  *         in: path

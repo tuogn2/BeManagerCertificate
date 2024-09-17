@@ -154,6 +154,36 @@ class CertificateController {
       res.status(500).json({ message: "Error deleting certificate", error });
     }
   }
+
+  // Get certificates by student (user) ID
+  async getByStudentId(req, res) {
+    try {
+      const { studentId } = req.params;
+  
+      // Fetch certificates based on student (user) ID, excluding certain fields from course and organization
+      const certificates = await Certificate.find({ user: studentId })
+        .populate({
+          path: 'organization',
+          select: '-password', // Exclude password from organization
+        })
+        .populate({
+          path: 'course',
+          select: '-finalQuiz -documents', // Exclude finalQuiz and documents from course
+        });
+  
+      if (certificates.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No certificates found for this student" });
+      }
+  
+      res.status(200).json(certificates);
+    } catch (error) {
+      console.error("Error retrieving certificates by student ID:", error);
+      res.status(500).json({ message: "Error retrieving certificates", error });
+    }
+  }
+  
 }
 
 module.exports = new CertificateController();
