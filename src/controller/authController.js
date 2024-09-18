@@ -7,6 +7,65 @@ const { sendEmail } = require("../utils/mailService");
 
 const crypto = require("crypto");
 class userController {
+
+  async signup(req, res) {
+    const { email, name, password } = req.body;
+
+    try {
+      // Check if the user already exists
+      const existingUser = await users.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create a new user
+      const newUser = new users({
+        name,
+        email,
+        password: hashedPassword,
+        role: "customer", // Set default role or adjust as needed
+        createdAt: new Date(),
+        certificates: [],
+        enrollments: [],
+      });
+
+      await newUser.save();
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { userId: newUser._id, role: newUser.role },
+        process.env.JWT_Access_Key,
+        { expiresIn: "350d" }
+      );
+
+      // Exclude sensitive data
+      const userInfo = {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+        address: newUser.address,
+        avt: newUser.avt,
+        certificates: newUser.certificates,
+        createdAt: newUser.createdAt,
+        enrollments: newUser.enrollments,
+      };
+
+      // Return token and user information
+      return res.status(201).json({
+        token,
+        user: userInfo,
+        message: "Signin successful",
+      });
+    } catch (error) {
+      console.error("Signin error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+
   async adduser(req, res, next) {
     const { name, email, password, role, birthday, numberphone, address, avt } =
       req.body;
