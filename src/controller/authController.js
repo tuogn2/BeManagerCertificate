@@ -3,6 +3,9 @@ const Organization = require("../models/Organization");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("../utils/mailService");
+
+const crypto = require("crypto");
 class userController {
   async adduser(req, res, next) {
     const { name, email, password, role, birthday, numberphone, address, avt } =
@@ -54,13 +57,11 @@ class userController {
       };
 
       // Return token and user information
-      return res
-        .status(201)
-        .json({
-          token,
-          user: userInfo,
-          message: "User registered successfully",
-        });
+      return res.status(201).json({
+        token,
+        user: userInfo,
+        message: "User registered successfully",
+      });
     } catch (error) {
       console.error("Sign-up error:", error);
       res.status(500).json({ message: "Server error" });
@@ -182,18 +183,29 @@ class userController {
 
       // If not found, create a new user
       if (!user) {
+        // Generate a random 8-character password
+        const tempPassword = crypto.randomBytes(4).toString("hex"); // Generates a random 8-character string
+
         user = new users({
           name,
           email,
-          password: '1', // No password needed
+          password: await bcrypt.hash(tempPassword, 10), // Hash the temporary password
           role: "customer", // Default role or you can determine this dynamically
           avt,
           createdAt: new Date(),
           certificates: [],
           enrollments: [],
         });
-
+        console.log(user);
         await user.save();
+
+        // Send the temporary password to the user via email
+        const subject = "Your Temporary Password";
+        const message = `Hello ${name},\n\nYour temporary password is: ${tempPassword}\n\nPlease log in using this password and change it as soon as possible.`;
+        await sendEmail(email, subject, message);
+      } else {
+        // Handle the case where a user is found
+        // Optionally, you can send a message or handle this case as needed
       }
 
       // Generate JWT token
