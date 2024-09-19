@@ -11,7 +11,6 @@
   const cloudinary = require('cloudinary').v2;
   const upload = require('./src/middleware/upload.js');
 
-
   const { swaggerUi, swaggerDocs } = require('./src/configs/swagger.js');
   const app = express();
   const port = process.env.PORT || 5000;
@@ -22,7 +21,7 @@
   app.use(express.json());
   app.use(express.static(path.join(__dirname, 'src/public')));
   app.use(morgan("combined"));
-
+  
   app.use(cors({
       origin: 'http://localhost:5173',
       credentials: true

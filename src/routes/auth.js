@@ -167,4 +167,139 @@ route.post('/createuser', authController.adduser);
  */
 route.post('/login', authController.login);
 
+
+/**
+ * @swagger
+ * /signup:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email
+ *                 example: johndoe@gmail.com
+ *               name:
+ *                 type: string
+ *                 description: User's name
+ *                 example: John Doe
+ *               password:
+ *                 type: string
+ *                 description: User's password
+ *                 example: password123
+ *     responses:
+ *       201:
+ *         description: User successfully registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: JWT token
+ *                 user:
+ *                   type: object
+ *                   description: User's information
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: User ID
+ *                     name:
+ *                       type: string
+ *                       description: User's name
+ *                     email:
+ *                       type: string
+ *                       description: User's email
+ *                     role:
+ *                       type: string
+ *                       description: User's role
+ *                     address:
+ *                       type: string
+ *                       description: User's address
+ *                     avt:
+ *                       type: string
+ *                       description: User's avatar link
+ *                     createdAt:
+ *                       type: string
+ *                       description: Date of account creation
+ *                     enrollments:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       400:
+ *         description: Email already in use
+ *       500:
+ *         description: Server error
+ */
+route.post('/signup', authController.signup);
+/**
+ * @swagger
+ * /login-with-google:
+ *   post:
+ *     summary: Đăng nhập hoặc đăng ký người dùng bằng Google
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email của người dùng
+ *                 example: johndoe@gmail.com
+ *               name:
+ *                 type: string
+ *                 description: Tên người dùng
+ *                 example: John Doe
+ *               avt:
+ *                 type: string
+ *                 description: Link ảnh đại diện của người dùng
+ *                 example: avt.jpg
+ *     responses:
+ *       200:
+ *         description: Đăng nhập hoặc đăng ký thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: JWT token
+ *                 user:
+ *                   type: object
+ *                   description: Thông tin người dùng
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: ID của người dùng
+ *                     name:
+ *                       type: string
+ *                       description: Tên người dùng
+ *                     email:
+ *                       type: string
+ *                       description: Email của người dùng
+ *                     role:
+ *                       type: string
+ *                       description: Vai trò của người dùng
+ *                     address:
+ *                       type: string
+ *                       description: Địa chỉ của người dùng
+ *                     avt:
+ *                       type: string
+ *                       description: Link ảnh đại diện của người dùng
+ *       500:
+ *         description: Lỗi server
+ */
+route.post('/login-with-google', authController.loginWithGoogle);
+
 module.exports = route;
