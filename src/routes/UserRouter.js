@@ -1,14 +1,38 @@
-const express = require('express');
+const express = require("express");
 const route = express.Router();
 const userController = require("../controller/userController");
 const middlewareController = require("../controller/middlewareController");
-const upload = require('../middleware/upload');
+const upload = require("../middleware/upload");
 /**
  * @swagger
  * tags:
  *   name: Users
  *   description: API endpoints for managing users
  */
+
+/**
+ * @swagger
+ * /users/send-code:
+ *   post:
+ *     tags: [Users]
+ *     summary: Send a password reset verification code to user's email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The user's email address
+ *     responses:
+ *       200:
+ *         description: Verification code sent
+ *       500:
+ *         description: Server error
+ */
+route.post("/send-code", userController.sendCode);
 
 /**
  * @swagger
@@ -22,7 +46,7 @@ const upload = require('../middleware/upload');
  *       500:
  *         description: Server error
  */
-route.get('/',userController.getAlluser);
+route.get("/", userController.getAlluser);
 
 /**
  * @swagger
@@ -45,7 +69,7 @@ route.get('/',userController.getAlluser);
  *       500:
  *         description: Server error
  */
-route.get('/:id',  userController.getuser);
+route.get("/:id", userController.getuser);
 
 /**
  * @swagger
@@ -85,7 +109,7 @@ route.get('/:id',  userController.getuser);
  *       500:
  *         description: Server error
  */
-route.put("/change-infor/:id",upload.single('avt'), userController.updateUser);
+route.put("/change-infor/:id", upload.single("avt"), userController.updateUser);
 
 /**
  * @swagger
@@ -122,5 +146,7 @@ route.put("/change-infor/:id",upload.single('avt'), userController.updateUser);
  *         description: Server error
  */
 route.put("/change-password/:id", userController.changePassword);
+
+route.put("/forgotpassword/:id", userController.forgotpassword);
 
 module.exports = route;
