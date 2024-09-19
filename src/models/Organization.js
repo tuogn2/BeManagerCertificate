@@ -1,10 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const OrganizationSchema = new mongoose.Schema({
-  name: { type: String,
-    required: true,
-    trim: true,
-  },
+  name: { type: String, required: true, trim: true },
   address: {
     type: String,
     trim: true,
@@ -29,19 +26,27 @@ const OrganizationSchema = new mongoose.Schema({
     type: String,
     default: "organization",
   },
+  isActive: {
+    type: Boolean,
+    default: true, // Mặc định là false
+  },
   certificatesIssued: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Certificate",
     },
   ],
- 
+
   courseBundles: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "CourseBundle",
     },
-  ] 
+  ],
+  walletaddress: {
+    type: String,
+    required: true
+  },
 });
 
 module.exports = mongoose.model("Organization", OrganizationSchema);

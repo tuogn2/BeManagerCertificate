@@ -88,6 +88,29 @@ router.get('/:id', organizationController.getOrganizationById);
 
 /**
  * @swagger
+ * /organizations/{id}/activate:
+ *   patch:
+ *     tags: [Organizations]
+ *     summary: Activate an organization by setting isActive to true
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Organization ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Organization activated successfully
+ *       404:
+ *         description: Organization not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/:id/activate', organizationController.changeIsActiveTrue);
+
+/**
+ * @swagger
  * /organizations/{id}:
  *   put:
  *     tags: [Organizations]
@@ -154,5 +177,7 @@ router.put('/:id', upload.single('avatar'), organizationController.updateOrganiz
  *         description: Server error
  */
 router.delete('/:id', organizationController.deleteOrganization);
+
+
 
 module.exports = router;
