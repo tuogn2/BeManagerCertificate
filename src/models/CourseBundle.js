@@ -25,7 +25,10 @@ const courseBundleSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },image: {
+    type: String,
+    trim: true,
+  },
 });
 
 module.exports = mongoose.model('CourseBundle', courseBundleSchema);

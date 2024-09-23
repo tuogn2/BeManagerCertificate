@@ -84,16 +84,13 @@ class OrganizationController {
   // Cập nhật tổ chức theo ID
   async updateOrganization(req, res) {
     const orgId = req.params.id;
-    const { name, address, email, password, walletaddress } = req.body; // Thêm walletAddress vào đây
+    const { name, address, email, walletaddress } = req.body; // Không lấy password từ body nếu không cập nhật
     const avatar = req.file; // Lấy tệp từ req.file
-
+  
     try {
-      // Nếu có mật khẩu mới, hash nó trước khi lưu
+      // Dữ liệu để cập nhật tổ chức (không bao gồm password)
       let updateData = { name, address, email, walletaddress }; // Thêm walletAddress vào dữ liệu cập nhật
-      if (password) {
-        updateData.password = await bcrypt.hash(password, 10);
-      }
-
+  
       let avatarUrl = null;
       if (avatar) {
         // Tải tệp lên Cloudinary
@@ -105,24 +102,54 @@ class OrganizationController {
             })
             .end(avatar.buffer);
         });
-
+  
         avatarUrl = result.secure_url; // Lấy URL của tệp
         updateData.avatar = avatarUrl; // Cập nhật URL của ảnh
       }
-
+  
       const updatedOrganization = await Organization.findByIdAndUpdate(
         orgId,
         updateData,
         { new: true } // Trả về tài liệu đã cập nhật
       );
-
+  
       if (!updatedOrganization) {
         return res.status(404).json({ message: "Organization not found" });
       }
-
+  
       return res.status(200).json(updatedOrganization);
     } catch (error) {
       console.error("Error updating organization:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+  async changePassword(req, res) {
+    const orgId = req.params.id;
+    const { oldPassword, newPassword } = req.body;
+
+    try {
+      // Lấy tổ chức theo ID
+      const organization = await Organization.findById(orgId);
+      if (!organization) {
+        return res.status(404).json({ message: "Organization not found" });
+      }
+
+      // So sánh mật khẩu cũ với mật khẩu hiện tại
+      const isMatch = await bcrypt.compare(oldPassword, organization.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Incorrect old password" });
+      }
+
+      // Hash mật khẩu mới
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      // Cập nhật mật khẩu mới
+      organization.password = hashedNewPassword;
+      await organization.save();
+
+      return res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("Error changing password:", error);
       return res.status(500).json({ message: "Server error" });
     }
   }

@@ -102,7 +102,7 @@ class userController {
       );
 
       const userInfo = {
-        id: newUser._id,
+        _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
@@ -184,7 +184,7 @@ class userController {
 
       // Nếu không có người dùng, tiếp tục kiểm tra tổ chức
       if (!user) {
-        user = await Organization.findOne({ email })
+        user = await Organization.findOne({ email,isActive:true })
           .populate("certificatesIssued")
           .populate("courseBundles");
 
@@ -213,7 +213,7 @@ class userController {
 
       // Loại bỏ mật khẩu trước khi gửi thông tin người dùng/tổ chức
       const userInfo = {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
@@ -238,7 +238,8 @@ class userController {
 
     try {
       // Check if the user already exists
-      let user = await users.findOne({ email });
+      let user = await users.findOne({ email }).populate("certificates")
+      .populate("enrollments");;
 
       // If not found, create a new user
       if (!user) {

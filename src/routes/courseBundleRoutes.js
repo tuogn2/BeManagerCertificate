@@ -1,6 +1,41 @@
 const express = require('express');
 const router = express.Router();
 const courseBundleController = require('../controller/CourseBundleController');
+const upload = require('../middleware/upload'); // Import middleware upload
+
+
+
+
+
+/**
+ * @openapi
+ * /api/course-bundles/organization/{organizationId}:
+ *   get:
+ *     summary: Get course bundles by organization ID
+ *     tags:
+ *       - CourseBundles
+ *     parameters:
+ *       - name: organizationId
+ *         in: path
+ *         required: true
+ *         description: ID of the organization
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of course bundles for the specified organization
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       404:
+ *         description: Organization not found
+ *       500:
+ *         description: Error retrieving course bundles
+ */
+router.get('/:organizationId', courseBundleController.getByOrganization);
 
 /**
  * @openapi
@@ -45,7 +80,7 @@ const courseBundleController = require('../controller/CourseBundleController');
  *       400:
  *         description: Error creating course bundle
  */
-router.post('/', courseBundleController.create);
+router.post('/',upload.single('image'), courseBundleController.create);
 
 /**
  * @openapi
@@ -182,7 +217,7 @@ router.get('/:id', courseBundleController.getById);
  *       400:
  *         description: Error updating course bundle
  */
-router.put('/:id', courseBundleController.update);
+router.put('/:id',upload.single('image'), courseBundleController.update);
 
 /**
  * @openapi

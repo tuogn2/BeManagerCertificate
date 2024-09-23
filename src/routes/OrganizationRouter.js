@@ -109,6 +109,7 @@ router.get('/:id', organizationController.getOrganizationById);
  */
 router.put('/:id/activate', organizationController.changeIsActiveTrue);
 
+router.put("/:id/change-password", organizationController.changePassword);
 /**
  * @swagger
  * /organizations/{id}:

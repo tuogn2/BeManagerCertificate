@@ -46,6 +46,7 @@ class CertificateController {
       const certificateImageUrl = await createCertificateImage({
         userName: user.name,
         organizationName: organization.name,
+        organizationAvt: organization.avatar,
         courseName: course.title,
         score: score,
       });

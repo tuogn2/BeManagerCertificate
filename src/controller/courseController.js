@@ -98,16 +98,25 @@ class CourseController {
   }
   
 
-  // Lấy tất cả các khóa học
-  // async getAll(req, res) {
-  //   try {
-  //     const courses = await Course.find().populate("organization"); // Tùy chỉnh nếu cần
-  //     return res.status(200).json(courses);
-  //   } catch (error) {
-  //     console.error("Error fetching courses:", error);
-  //     return res.status(500).json({ message: "Server error" });
-  //   }
-  // }
+  async getCourseByOrganization(req, res) {
+    const organizationId = req.params.id;
+  
+    try {
+      // Find all courses by organization ID
+      const courses = await Course.find({ organization: organizationId }).populate("organization");
+  
+      if (!courses || courses.length === 0) {
+        return res.status(404).json({ message: "No courses found for this organization" });
+      }
+  
+      return res.status(200).json(courses);
+    } catch (error) {
+      console.error("Error fetching courses by organization:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+  
+
 
   async getAll(req, res) {
     try {
