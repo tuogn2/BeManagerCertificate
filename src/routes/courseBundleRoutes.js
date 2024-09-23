@@ -6,6 +6,8 @@ const upload = require('../middleware/upload'); // Import middleware upload
 
 
 
+// New search route
+router.get("/search", courseBundleController.search);
 
 /**
  * @openapi
