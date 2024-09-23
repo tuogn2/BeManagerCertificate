@@ -101,21 +101,34 @@ class CourseController {
 
   async getCourseByOrganization(req, res) {
     const organizationId = req.params.id;
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit) || 6; // Default to limit of 6 if not provided
+    const skip = (page - 1) * limit; // Calculate skip value
   
     try {
-      // Find all courses by organization ID
-      const courses = await Course.find({ organization: organizationId }).populate("organization");
+      // Find all courses by organization ID with pagination
+      const courses = await Course.find({ organization: organizationId })
+        .populate("organization")
+        .skip(skip)
+        .limit(limit);
+  
+      const totalCourses = await Course.countDocuments({ organization: organizationId }); // Get total number of courses
   
       if (!courses || courses.length === 0) {
         return res.status(404).json({ message: "No courses found for this organization" });
       }
   
-      return res.status(200).json(courses);
+      return res.status(200).json({
+        courses,
+        totalPages: Math.ceil(totalCourses / limit), // Calculate total pages
+        currentPage: page,
+      });
     } catch (error) {
       console.error("Error fetching courses by organization:", error);
       return res.status(500).json({ message: "Server error" });
     }
   }
+  
   
 
 
@@ -223,7 +236,7 @@ class CourseController {
     }
   }
   
-  
+
 
   // src/controller/CourseController.js
   async search(req, res) {
