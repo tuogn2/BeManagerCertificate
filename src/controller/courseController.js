@@ -1,6 +1,7 @@
 const Course = require("../models/Course"); // Đảm bảo đường dẫn đúng đến mô hình Course
 const cloudinary = require("cloudinary").v2;
 const bcrypt = require("bcryptjs");
+const Enrollment = require("../models/Enrollment");
 
 class CourseController {
   // Tạo khóa học mới
@@ -201,13 +202,19 @@ class CourseController {
   // Xóa khóa học theo ID
   async delete(req, res) {
     const courseId = req.params.id;
-
+  
     try {
       const course = await Course.findById(courseId);
       if (!course) {
         return res.status(404).json({ message: "Course not found" });
       }
-
+  
+      // Kiểm tra xem có người dùng nào đã đăng ký khóa học này không
+      const enrollments = await Enrollment.find({ course: courseId });
+      if (enrollments.length > 0) {
+        return res.status(400).json({ message: "Course cannot be deleted as there are students enrolled" });
+      }
+  
       await Course.findByIdAndDelete(courseId);
       return res.status(200).json({ message: "Course deleted successfully" });
     } catch (error) {
@@ -215,6 +222,8 @@ class CourseController {
       return res.status(500).json({ message: "Server error" });
     }
   }
+  
+  
 
   // src/controller/CourseController.js
   async search(req, res) {
