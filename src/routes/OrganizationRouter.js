@@ -10,6 +10,10 @@ const upload = require('../middleware/upload');
  *   description: API endpoints for managing organizations
  */
 
+
+
+
+
 /**
  * @swagger
  * /organizations:
@@ -48,6 +52,8 @@ const upload = require('../middleware/upload');
  *         description: Server error
  */
 router.post('/', upload.single('avatar'), organizationController.createOrganization);
+
+
 
 /**
  * @swagger

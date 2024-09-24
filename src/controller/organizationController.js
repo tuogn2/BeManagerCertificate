@@ -52,15 +52,45 @@ class OrganizationController {
   // Lấy tất cả các tổ chức
   async getAllOrganizations(req, res) {
     try {
-      const organizations = await Organization.find({
+      // Get the current page and limit from the query, defaulting to page 1 and limit 6
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 6;
+      const skip = (page - 1) * limit;
+  
+      // Get the search query from the request
+      const searchQuery = req.query.search || ""; // Default to an empty string if no search query is provided
+  
+      // Build a filter object for the search functionality
+      const filter = {
         isActive: true,
-      }).populate("certificatesIssued");
-      return res.status(200).json(organizations);
+        // Assuming you're searching by name or email
+        $or: [
+          { name: { $regex: searchQuery, $options: 'i' } }, // Search by name (case insensitive)
+          { email: { $regex: searchQuery, $options: 'i' } }, // Search by email (case insensitive)
+        ],
+      };
+  
+      // Get the list of organizations with pagination and search
+      const organizations = await Organization.find(filter)
+        .populate("certificatesIssued")
+        .skip(skip)
+        .limit(limit);
+  
+      // Calculate the total number of organizations to determine total pages
+      const totalOrganizations = await Organization.countDocuments(filter);
+      const totalPages = Math.ceil(totalOrganizations / limit);
+  
+      return res.status(200).json({
+        organizations,
+        totalPages, // Total number of pages
+        currentPage: page, // Current page
+      });
     } catch (error) {
       console.error("Error fetching organizations:", error);
       return res.status(500).json({ message: "Server error" });
     }
   }
+  
 
   // Lấy tổ chức theo ID
   async getOrganizationById(req, res) {
@@ -86,11 +116,11 @@ class OrganizationController {
     const orgId = req.params.id;
     const { name, address, email, walletaddress } = req.body; // Không lấy password từ body nếu không cập nhật
     const avatar = req.file; // Lấy tệp từ req.file
-  
+
     try {
       // Dữ liệu để cập nhật tổ chức (không bao gồm password)
       let updateData = { name, address, email, walletaddress }; // Thêm walletAddress vào dữ liệu cập nhật
-  
+
       let avatarUrl = null;
       if (avatar) {
         // Tải tệp lên Cloudinary
@@ -102,21 +132,21 @@ class OrganizationController {
             })
             .end(avatar.buffer);
         });
-  
+
         avatarUrl = result.secure_url; // Lấy URL của tệp
         updateData.avatar = avatarUrl; // Cập nhật URL của ảnh
       }
-  
+
       const updatedOrganization = await Organization.findByIdAndUpdate(
         orgId,
         updateData,
         { new: true } // Trả về tài liệu đã cập nhật
       );
-  
+
       if (!updatedOrganization) {
         return res.status(404).json({ message: "Organization not found" });
       }
-  
+
       return res.status(200).json(updatedOrganization);
     } catch (error) {
       console.error("Error updating organization:", error);
@@ -196,6 +226,9 @@ class OrganizationController {
       return res.status(500).json({ message: "Server error" });
     }
   }
+
+
+
 }
 
 module.exports = new OrganizationController();
