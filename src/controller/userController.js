@@ -4,16 +4,47 @@ const cloudinary = require("cloudinary").v2;
 const nodemailer = require("nodemailer");
 
 class userController {
-  getAlluser(req, res, next) {
-    users
-      .find()
-      .select("-password") // Loại trừ trường 'password'
-      .then((user) => {
-        return res.status(200).json(user); // Trả về danh sách người dùng (không có mật khẩu) dưới dạng JSON
-      })
-      .catch((err) => res.status(500).json(err)); // Nếu có lỗi xảy ra, trả về mã 500 cùng với lỗi
-  }
+  async getAlluser(req, res) {
+    try {
+      // Get current page and limit from query, defaulting to page 1 and limit 6
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 6;
+      const skip = (page - 1) * limit;
 
+      // Get search query from the request
+      const searchQuery = req.query.search || ""; // Default to empty string if no search query
+
+      // Build the filter object for searching
+      const filter = searchQuery
+        ? {
+            $or: [
+              { name: { $regex: searchQuery, $options: "i" } }, // Search by name (case insensitive)
+              { email: { $regex: searchQuery, $options: "i" } }, // Search by email (case insensitive)
+            ],
+          }
+        : {}; // If no search query, don't filter
+
+      // Find users with the filter condition
+      const usersList = await users
+        .find(filter)
+        .select("-password") // Exclude the 'password' field
+        .limit(limit) // Limit the number of results
+        .skip(skip); // Skip the number of results already shown
+
+      // Count total users to calculate total pages
+      const count = await users.countDocuments(filter);
+
+      // Return the list of users and pagination information
+      res.status(200).json({
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        users: usersList, // List of users
+      });
+    } catch (err) {
+      console.error(err); // Log the error
+      res.status(500).json(err); // If an error occurs, return 500 status with error
+    }
+  }
   async getuser(req, res, next) {
     try {
       const user = await users.findById(req.params.id).populate("enrollments"); // Populate trường enrollments
