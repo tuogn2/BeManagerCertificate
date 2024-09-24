@@ -149,4 +149,7 @@ route.put("/change-password/:id", userController.changePassword);
 
 route.put("/forgotpassword/:id", userController.forgotpassword);
 
+
+route.delete('/:id', userController.deleteUser);
+
 module.exports = route;
