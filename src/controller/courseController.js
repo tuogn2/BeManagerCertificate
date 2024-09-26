@@ -2,6 +2,8 @@ const Course = require("../models/Course"); // Đảm bảo đường dẫn đú
 const cloudinary = require("cloudinary").v2;
 const bcrypt = require("bcryptjs");
 const Enrollment = require("../models/Enrollment");
+const Organization = require("../models/Organization");
+const CourseBundle = require("../models/CourseBundle");
 
 class CourseController {
   // Tạo khóa học mới
@@ -134,14 +136,21 @@ class CourseController {
 
   async getAll(req, res) {
     try {
-      // Find courses where isActive is true
-      const courses = await Course.find({ isActive: true }).populate("organization"); // Adjust if necessary
+      // Get the limit from query parameters, default to 10 if not provided
+      const limit = parseInt(req.query.limit) || 6;
+  
+      // Find courses where isActive is true and limit the number of items
+      const courses = await Course.find({ isActive: true })
+        .populate("organization")
+        .limit(limit); // Limit the number of courses returned
+  
       return res.status(200).json(courses);
     } catch (error) {
       console.error("Error fetching courses:", error);
       return res.status(500).json({ message: "Server error" });
     }
   }
+  
   
 
   // Lấy khóa học theo ID
@@ -241,21 +250,55 @@ class CourseController {
   // src/controller/CourseController.js
   async search(req, res) {
     try {
-      const query = req.query.query; // Lấy từ khóa tìm kiếm từ query string
+      const { query } = req.query; // Lấy từ khóa tìm kiếm
+      const limit = 5; // Giới hạn tổng số kết quả trả về
+  
       if (!query) {
         return res.status(400).json({ message: "Query parameter is required" });
       }
   
+      // Tìm kiếm tổ chức dựa trên name
+      const matchingOrganizations = await Organization.find({
+        name: { $regex: query, $options: "i" } // Tìm kiếm không phân biệt chữ hoa chữ thường
+      }).select('_id'); // Chỉ lấy trường _id của tổ chức
+  
+      // Tìm kiếm các khóa học dựa trên title, description hoặc tổ chức
       const courses = await Course.find({
-        title: { $regex: query, $options: "i" }, // Tìm kiếm không phân biệt chữ hoa chữ thường
-        isActive: true // Chỉ tìm các khóa học có isActive = true
+        $or: [
+          { title: { $regex: query, $options: "i" } },       // Tìm kiếm theo title
+          { description: { $regex: query, $options: "i" } },  // Tìm kiếm theo description
+          { organization: { $in: matchingOrganizations.map(org => org._id) } } // Tìm kiếm theo tổ chức
+        ],
+        isActive: true // Chỉ lấy các khóa học có isActive = true
       });
   
-      res.json(courses);
+      // Tìm kiếm các bundle dựa trên title hoặc description
+      const bundles = await CourseBundle.find({
+        $or: [
+          { title: { $regex: query, $options: "i" } }, // Tìm kiếm theo title
+          { description: { $regex: query, $options: "i" } }, // Tìm kiếm theo description
+          { organization: { $in: matchingOrganizations.map(org => org._id) } } // Tìm kiếm theo tổ chức
+        ],
+      });
+  
+      // Kết hợp các kết quả
+      const combinedResults = [...courses, ...bundles];
+  
+      // Giới hạn số lượng kết quả trả về tối đa là 5
+      const limitedResults = combinedResults.slice(0, limit);
+  
+      // Tách kết quả thành courses và bundles
+      const limitedCourses = limitedResults.filter(result => result instanceof Course);
+      const limitedBundles = limitedResults.filter(result => result instanceof CourseBundle);
+  
+      // Trả về danh sách các khóa học và bundle tìm được
+      res.json({ courses: limitedCourses, bundles: limitedBundles });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   }
+  
+  
   
   async getInactiveCourses(req, res) {
     try {

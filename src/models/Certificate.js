@@ -14,7 +14,10 @@ const certificateSchema = new mongoose.Schema({
   course: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Course", // Liên kết với mô hình Course
-    required: true,
+  },
+  bundle: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CourseBundle',
   },
   score: {
     type: Number,  // Điểm số của bài test

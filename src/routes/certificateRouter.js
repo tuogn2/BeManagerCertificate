@@ -2,6 +2,11 @@ const express = require("express");
 const router = express.Router();
 const certificateController = require("../controller/certificateController");
 
+
+
+router.post("/createCertificateBunble", certificateController.createCertificateOfBunble);
+
+
 /**
  * @openapi
  * /api/certificates:

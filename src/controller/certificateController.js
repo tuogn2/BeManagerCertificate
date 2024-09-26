@@ -2,7 +2,7 @@ const Certificate = require("../models/Certificate");
 const User = require("../models/User");
 const QuizResult = require("../models/quizResult");
 const Course = require("../models/Course");
-
+const CourseBundle = require("../models/CourseBundle");
 const Organization = require("../models/Organization");
 const { v4: uuidv4 } = require("uuid");
 
@@ -11,6 +11,77 @@ const createCertificateImage = require("../utils/createCertificateImage");
 const { web3, contract } = require("../../contract");
 
 class CertificateController {
+  async createCertificateOfBunble(req, res) {
+      const {
+        user: userId,
+        organization: organizationId,
+        bunbles: bunbles,      
+      } = req.body;
+  
+      try {
+        // Fetch the user, organization, and course from the database
+        const user = await User.findById(userId);
+        const organization = await Organization.findById(organizationId);
+        const courseBundle = await CourseBundle.findById(bunbles);
+  
+        if (!user || !organization || !courseBundle) {
+          return res
+            .status(404)
+            .json({ message: "User, Organization, or Course not found" });
+        }
+  
+        // Create a new certificate
+        const certificate = new Certificate({
+          user: userId,
+          organization: organizationId,
+          bundle: bunbles,
+          certificateId: uuidv4(), // Generate a UUID for the certificate
+          score: 100,
+        });
+  
+        const savedCertificate = await certificate.save();
+  
+        // Generate certificate image and upload to Cloudinary
+        const certificateImageUrl = await createCertificateImage({
+          userName: user.name,
+          organizationName: organization.name,
+          organizationAvt: organization.avatar,
+          courseName: courseBundle.title,
+          score: 100,
+        });
+  
+        // Update the certificate with the image URL
+        savedCertificate.imageUrl = certificateImageUrl;
+        await savedCertificate.save();
+  
+        user.certificates.push(savedCertificate._id);
+        await user.save();
+  
+        // Gọi hợp đồng thông minh để cập nhật chứng chỉ trên blockchain
+  
+        await contract.methods
+          .addCertificateDetails(
+            bunbles, // ID khóa học (courseId từ MongoDB)
+            userId, // ID sinh viên (userId từ MongoDB)
+            "thisishash", // Hash của chứng chỉ (nếu có, có thể là một hash duy nhất được tạo dựa trên thông tin chứng chỉ)
+            100, // Điểm số của sinh viên
+            savedCertificate.certificateId, // ID chứng chỉ (UUID được tạo trong MongoDB)
+            certificateImageUrl, // URL của ảnh chứng chỉ (được tải lên Cloudinary)
+            true // Trạng thái hoàn thành khóa học
+          )
+          .send({ from: web3.eth.defaultAccount }); // Địa chỉ ví Ethereum thực hiện giao dịch
+  
+        // Return the saved certificate and image URL
+        res.status(201).json({
+          certificate: savedCertificate,
+          imageUrl: certificateImageUrl,
+        });
+      } catch (error) {
+        console.error("Error creating certificate:", error);
+        res.status(400).json({ message: "Error creating certificate", error });
+      }
+    }
+
   async create(req, res) {
     const {
       user: userId,
@@ -89,7 +160,8 @@ class CertificateController {
       const certificate = await Certificate.findById(req.params.id)
         .populate("user")
         .populate("organization")
-        .populate("course");
+        .populate("course")
+        .populate("bundle");
 
       if (!certificate) {
         return res.status(404).json({ message: "Certificate not found" });
@@ -170,7 +242,9 @@ class CertificateController {
         .populate({
           path: 'course',
           select: '-finalQuiz -documents', // Exclude finalQuiz and documents from course
-        });
+        })
+        .populate("bundle");
+
   
       if (certificates.length === 0) {
         return res

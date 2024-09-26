@@ -167,7 +167,7 @@ router.get('/', courseBundleController.getAll);
  *       500:
  *         description: Error retrieving course bundle
  */
-router.get('/:id', courseBundleController.getById);
+router.get('/getid/:id', courseBundleController.getById);
 
 /**
  * @openapi

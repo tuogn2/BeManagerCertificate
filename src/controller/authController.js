@@ -127,58 +127,14 @@ class userController {
     }
   }
 
-  //   async  login(req, res) {
-  //     const { email, password } = req.body;
-
-  //     try {
-  //         // Check if the user exists
-  //         const user = await users.findOne({ email }).populate('certificates').populate('enrollments');
-  //         if (!user) {
-  //             return res.status(400).json({ message: 'Invalid email or password' });
-  //         }
-
-  //         // Validate the password
-  //         const isMatch = await bcrypt.compare(password, user.password);
-  //         if (!isMatch) {
-  //             return res.status(400).json({ message: 'Invalid email or password' });
-  //         }
-
-  //         // Generate JWT token
-  //         const token = jwt.sign(
-  //             { userId: user._id, role: user.role },
-  //             process.env.JWT_Access_Key,
-  //             { expiresIn: '350d' }
-  //         );
-
-  //         // Exclude the password before sending user information
-  //         const userInfo = {
-  //             id: user._id,
-  //             name: user.name,
-  //             email: user.email,
-  //             role: user.role,
-  //             birthday: user.birthday,
-  //             numberphone: user.numberphone,
-  //             address: user.address,
-  //             avt: user.avt,
-  //             certificates: user.certificates,
-  //             createdAt: user.createdAt,
-  //             enrollments: user.enrollments,
-  //         };
-
-  //         // Return token and user information
-  //         return res.status(200).json({ token, user: userInfo, message: 'Login successful' });
-
-  //     } catch (error) {
-  //         console.error('Login error:', error);
-  //         res.status(500).json({ message: 'Server error' });
-  //     }}
+  
   async login(req, res) {
     const { email, password } = req.body;
 
     try {
       // Kiểm tra email có tồn tại trong bảng người dùng hay không
       let user = await users
-        .findOne({ email })
+        .findOne({ email,isActive:true })
         .populate("certificates")
         .populate("enrollments");
 

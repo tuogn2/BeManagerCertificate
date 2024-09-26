@@ -94,11 +94,17 @@ class userController {
 
   async updateUser(req, res) {
     const userId = req.params.id;
-    const { name, birthday, numberphone, address } = req.body; // Removed password from destructuring
-    const avt = req.file; // Get the file from req.file
+    const { name, email, birthday, numberphone, address } = req.body;
+    const avt = req.file;
 
     try {
-        let updateData = { name, birthday, numberphone, address };
+        // Check if another user exists with the same email (excluding the current user)
+        const existingUser = await users.findOne({ email, _id: { $ne: userId } });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email is already in use by another user." });
+        }
+
+        let updateData = { name, email, birthday, numberphone, address };
 
         // Handle avatar (if any)
         if (avt) {
@@ -133,6 +139,8 @@ class userController {
         return res.status(500).json({ message: "Server error" });
     }
 }
+
+
 
 
   // Change user password

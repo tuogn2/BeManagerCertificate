@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const enrollmentController = require('../controller/EnrollmentController');
 
+
+
+router.post('/createBundleEnrollment', enrollmentController.createBundleEnrollment);
+
 /**
  * @openapi
  * /api/enrollment:

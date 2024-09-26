@@ -60,9 +60,11 @@ class CourseBundleController {
   // Đọc thông tin về một course bundle theo ID
   async getById(req, res) {
     try {
+      
       const courseBundle = await CourseBundle.findById(req.params.id)
         .populate("courses")
         .populate("organization");
+        console.log("tuong");
       if (!courseBundle) {
         return res.status(404).json({ message: "Course bundle not found" });
       }
@@ -77,22 +79,31 @@ class CourseBundleController {
   // Đọc tất cả các course bundles
   async getAll(req, res) {
     try {
+      // Get the limit from query parameters, default to 6 if not provided
+      const limit = parseInt(req.query.limit) || 6;
+  
+      // Find course bundles and limit the number of items
       const courseBundles = await CourseBundle.find()
-        .populate("courses")
-        .populate("organization");
-      res.status(200).json(courseBundles);
+        .populate("courses") // Populate the courses field
+        .populate("organization") // Populate the organization field
+        .limit(limit); // Limit the number of bundles returned
+      return res.status(200).json(courseBundles);
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error retrieving course bundles", error });
+      console.error("Error fetching course bundles:", error);
+      return res.status(500).json({ message: "Server error" });
     }
   }
+  
 
   // Tìm kiếm các course bundles
   async search(req, res) {
-    const { query } = req.query; // Nhận truy vấn tìm kiếm từ tham số URL
-
+    const { query, limit = 2 } = req.query; // Nhận truy vấn tìm kiếm từ tham số URL và giới hạn kết quả
+  
     try {
+      if (!query) {
+        return res.status(400).json({ message: "Query parameter is required" });
+      }
+  
       // Tìm kiếm course bundles dựa trên title hoặc description
       const courseBundles = await CourseBundle.find({
         $or: [
@@ -101,8 +112,9 @@ class CourseBundleController {
         ],
       })
         .populate("courses")
-        .populate("organization");
-
+        .populate("organization")
+        .limit(parseInt(limit)); // Giới hạn số lượng kết quả trả về
+  
       res.status(200).json(courseBundles);
     } catch (error) {
       res
@@ -110,6 +122,7 @@ class CourseBundleController {
         .json({ message: "Error retrieving course bundles", error });
     }
   }
+  
 
   // Chỉnh sửa một course bundle theo ID
   async update(req, res) {

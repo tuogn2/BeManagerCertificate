@@ -227,6 +227,31 @@ class OrganizationController {
     }
   }
 
+// Thêm phương thức mới trong OrganizationController
+async getOrganizationNamesAndCourseCount(req, res) {
+  try {
+    // Sử dụng aggregate để lấy tên tổ chức và đếm tổng số khóa học
+    const organizationData = await Organization.aggregate([
+      {
+        $project: {
+          name: 1, // Chỉ lấy trường 'name'
+           // Đếm số lượng khóa học trong certificatesIssued
+        }
+      }
+    ]);
+
+    // Nếu không có tổ chức nào, trả về thông báo
+    if (!organizationData.length) {
+      return res.status(404).json({ message: "No organizations found" });
+    }
+
+    // Trả về danh sách tên tổ chức và tổng số khóa học
+    return res.status(200).json(organizationData);
+  } catch (error) {
+    console.error("Error fetching organization data:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
 
 
 }

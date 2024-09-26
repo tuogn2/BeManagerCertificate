@@ -53,7 +53,7 @@ const upload = require('../middleware/upload');
  */
 router.post('/', upload.single('avatar'), organizationController.createOrganization);
 
-
+router.get('/courses-count', organizationController.getOrganizationNamesAndCourseCount);
 
 /**
  * @swagger
