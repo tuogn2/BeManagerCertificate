@@ -7,7 +7,6 @@ const { sendEmail } = require("../utils/mailService");
 
 const crypto = require("crypto");
 class userController {
-
   async signup(req, res) {
     const { email, name, password } = req.body;
 
@@ -49,6 +48,8 @@ class userController {
         role: newUser.role,
         address: newUser.address,
         avt: newUser.avt,
+        birthday: newUser.birthday,
+        numberphone: newUser.numberphone,
         certificates: newUser.certificates,
         createdAt: newUser.createdAt,
         enrollments: newUser.enrollments,
@@ -127,20 +128,19 @@ class userController {
     }
   }
 
-  
   async login(req, res) {
     const { email, password } = req.body;
 
     try {
       // Kiểm tra email có tồn tại trong bảng người dùng hay không
       let user = await users
-        .findOne({ email,isActive:true })
+        .findOne({ email, isActive: true })
         .populate("certificates")
         .populate("enrollments");
 
       // Nếu không có người dùng, tiếp tục kiểm tra tổ chức
       if (!user) {
-        user = await Organization.findOne({ email,isActive:true })
+        user = await Organization.findOne({ email, isActive: true })
           .populate("certificatesIssued")
           .populate("courseBundles");
 
@@ -151,7 +151,6 @@ class userController {
             .json({ message: "Email hoặc mật khẩu không hợp lệ" });
         }
       }
-
       // Kiểm tra mật khẩu
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
@@ -175,7 +174,9 @@ class userController {
         role: user.role,
         address: user.address,
         avt: user.avt,
-        certificates: user.certificates || user.certificatesIssued,
+        birthday: user.birthday,
+        numberphone: user.numberphone,
+        certificates: user.certificates,
         createdAt: user.createdAt,
         enrollments: user.enrollments || user.courseBundles,
       };
@@ -194,8 +195,10 @@ class userController {
 
     try {
       // Check if the user already exists
-      let user = await users.findOne({ email }).populate("certificates")
-      .populate("enrollments");;
+      let user = await users
+        .findOne({ email })
+        .populate("certificates")
+        .populate("enrollments");
 
       // If not found, create a new user
       if (!user) {
@@ -239,6 +242,8 @@ class userController {
         role: user.role,
         address: user.address,
         avt: user.avt,
+        birthday: user.birthday,
+        numberphone: user.numberphone,
         certificates: user.certificates,
         createdAt: user.createdAt,
         enrollments: user.enrollments,
