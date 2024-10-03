@@ -215,7 +215,6 @@ class userController {
           certificates: [],
           enrollments: [],
         });
-        console.log(user);
         await user.save();
 
         // Send the temporary password to the user via email
@@ -223,8 +222,9 @@ class userController {
         const message = `Hello ${name},\n\nYour temporary password is: ${tempPassword}\n\nPlease log in using this password and change it as soon as possible.`;
         await sendEmail(email, subject, message);
       } else {
-        // Handle the case where a user is found
-        // Optionally, you can send a message or handle this case as needed
+        if(user.isActive === false){
+          return res.status(400).json({ message: "This account has been locked." });
+        }
       }
 
       // Generate JWT token

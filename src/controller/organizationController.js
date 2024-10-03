@@ -1,6 +1,7 @@
 const Organization = require("../models/Organization"); // Đảm bảo đường dẫn đúng đến mô hình Organization
 const bcrypt = require("bcryptjs");
 const cloudinary = require("cloudinary").v2;
+const users = require("../models/User");
 
 class OrganizationController {
   // Tạo tổ chức mới
@@ -10,10 +11,15 @@ class OrganizationController {
     try {
       // Kiểm tra nếu email đã tồn tại
       const existingOrganization = await Organization.findOne({ email });
-      if (existingOrganization) {
-        return res.status(400).json({ message: "Email already exists" });
-      }
-
+        if (existingOrganization) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+        const existinguser = await users.findOne({ email });
+       
+        if (existinguser) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+  
       // Hash mật khẩu trước khi lưu
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -56,30 +62,30 @@ class OrganizationController {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 6;
       const skip = (page - 1) * limit;
-  
+
       // Get the search query from the request
       const searchQuery = req.query.search || ""; // Default to an empty string if no search query is provided
-  
+
       // Build a filter object for the search functionality
       const filter = {
         isActive: true,
         // Assuming you're searching by name or email
         $or: [
-          { name: { $regex: searchQuery, $options: 'i' } }, // Search by name (case insensitive)
-          { email: { $regex: searchQuery, $options: 'i' } }, // Search by email (case insensitive)
+          { name: { $regex: searchQuery, $options: "i" } }, // Search by name (case insensitive)
+          { email: { $regex: searchQuery, $options: "i" } }, // Search by email (case insensitive)
         ],
       };
-  
+
       // Get the list of organizations with pagination and search
       const organizations = await Organization.find(filter)
         .populate("certificatesIssued")
         .skip(skip)
         .limit(limit);
-  
+
       // Calculate the total number of organizations to determine total pages
       const totalOrganizations = await Organization.countDocuments(filter);
       const totalPages = Math.ceil(totalOrganizations / limit);
-  
+
       return res.status(200).json({
         organizations,
         totalPages, // Total number of pages
@@ -90,7 +96,6 @@ class OrganizationController {
       return res.status(500).json({ message: "Server error" });
     }
   }
-  
 
   // Lấy tổ chức theo ID
   async getOrganizationById(req, res) {
@@ -118,6 +123,19 @@ class OrganizationController {
     const avatar = req.file; // Lấy tệp từ req.file
 
     try {
+
+      if(email){
+        const existingOrganization = await Organization.findOne({ email });
+        if (existingOrganization) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+        const existinguser = await users.findOne({ email });
+       
+        if (existinguser) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+  
+      }
       // Dữ liệu để cập nhật tổ chức (không bao gồm password)
       let updateData = { name, address, email, walletaddress }; // Thêm walletAddress vào dữ liệu cập nhật
 
@@ -227,33 +245,31 @@ class OrganizationController {
     }
   }
 
-// Thêm phương thức mới trong OrganizationController
-async getOrganizationNamesAndCourseCount(req, res) {
-  try {
-    // Sử dụng aggregate để lấy tên tổ chức và đếm tổng số khóa học
-    const organizationData = await Organization.aggregate([
-      {
-        $project: {
-          name: 1, // Chỉ lấy trường 'name'
-           // Đếm số lượng khóa học trong certificatesIssued
-        }
+  // Thêm phương thức mới trong OrganizationController
+  async getOrganizationNamesAndCourseCount(req, res) {
+    try {
+      // Sử dụng aggregate để lấy tên tổ chức và đếm tổng số khóa học
+      const organizationData = await Organization.aggregate([
+        {
+          $project: {
+            name: 1, // Chỉ lấy trường 'name'
+            // Đếm số lượng khóa học trong certificatesIssued
+          },
+        },
+      ]);
+
+      // Nếu không có tổ chức nào, trả về thông báo
+      if (!organizationData.length) {
+        return res.status(404).json({ message: "No organizations found" });
       }
-    ]);
 
-    // Nếu không có tổ chức nào, trả về thông báo
-    if (!organizationData.length) {
-      return res.status(404).json({ message: "No organizations found" });
+      // Trả về danh sách tên tổ chức và tổng số khóa học
+      return res.status(200).json(organizationData);
+    } catch (error) {
+      console.error("Error fetching organization data:", error);
+      return res.status(500).json({ message: "Server error" });
     }
-
-    // Trả về danh sách tên tổ chức và tổng số khóa học
-    return res.status(200).json(organizationData);
-  } catch (error) {
-    console.error("Error fetching organization data:", error);
-    return res.status(500).json({ message: "Server error" });
   }
-}
-
-
 }
 
 module.exports = new OrganizationController();

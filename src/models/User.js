@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     enum: ["admin", "customer"],
     default: "customer",
   },
-  birthday: { type: Date },
+  birthday: { type: Date},
   numberphone: { type: String, trim: true },
   address: { type: String, trim: true },
   avt: { type: String, default: "avt.jpg" }, // Lưu đường dẫn tới ảnh đại diện
