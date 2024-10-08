@@ -14,6 +14,11 @@ web3.eth.defaultAccount = account.address;
 // ABI của hợp đồng thông minh
 const contractABI = [
 	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "string",
@@ -55,44 +60,6 @@ const contractABI = [
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "courseId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "studentId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "studentName",
-				"type": "string"
-			},
-			{
-				"internalType": "address payable",
-				"name": "organization",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "organizationName",
-				"type": "string"
-			}
-		],
-		"name": "payForCourse",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
 	},
 	{
 		"inputs": [
@@ -180,6 +147,59 @@ const contractABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "courseId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "studentId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "studentName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "organizationName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "certificateId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "hash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "imageUrl",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "score",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "isCompleted",
+				"type": "bool"
+			}
+		],
+		"name": "createCertificate",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -363,6 +383,39 @@ const contractABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "courseId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "studentId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "studentName",
+				"type": "string"
+			},
+			{
+				"internalType": "address payable",
+				"name": "organization",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "organizationName",
+				"type": "string"
+			}
+		],
+		"name": "payForCourse",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	}
 ]

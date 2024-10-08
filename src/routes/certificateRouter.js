@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const certificateController = require("../controller/certificateController");
 
+const middlewareController = require("../middleware/middlewareController");
 
-
-router.post("/createCertificateBunble", certificateController.createCertificateOfBunble);
+router.post("/createCertificateBunble",middlewareController.verifyTokenStudent, certificateController.createCertificateOfBunble);
 
 
 /**
@@ -57,7 +57,7 @@ router.post("/createCertificateBunble", certificateController.createCertificateO
  *       400:
  *         description: Error creating certificate
  */
-router.post("/", certificateController.create);
+router.post("/", middlewareController.verifyTokenStudent,certificateController.create);
 
 /**
  * @openapi
@@ -137,7 +137,7 @@ router.get("/", certificateController.getAll);
  *       400:
  *         description: Error updating certificate
  */
-router.put("/:id", certificateController.update);
+router.put("/:id",middlewareController.verifyTokenAdmin, certificateController.update);
 
 /**
  * @openapi
@@ -161,7 +161,7 @@ router.put("/:id", certificateController.update);
  *       500:
  *         description: Error deleting certificate
  */
-router.delete("/:id", certificateController.delete);
+router.delete("/:id",middlewareController.verifyTokenAdmin, certificateController.delete);
 
 /**
  * @openapi

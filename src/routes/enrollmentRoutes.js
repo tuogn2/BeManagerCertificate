@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const enrollmentController = require('../controller/EnrollmentController');
+const middlewareController = require("../middleware/middlewareController");
 
 
 
-router.post('/createBundleEnrollment', enrollmentController.createBundleEnrollment);
+router.post('/createBundleEnrollment',middlewareController.verifyTokenStudent, enrollmentController.createBundleEnrollment);
 
 /**
  * @openapi
@@ -43,7 +44,7 @@ router.post('/createBundleEnrollment', enrollmentController.createBundleEnrollme
  *       500:
  *         description: Server error
  */
-router.post('/', enrollmentController.create);
+router.post('/',middlewareController.verifyTokenStudent, enrollmentController.create);
 
 /**
  * @openapi
@@ -132,7 +133,7 @@ router.get('/:id', enrollmentController.getById);
  *       500:
  *         description: Server error
  */
-router.put('/:id', enrollmentController.update);
+router.put('/:id',middlewareController.verifyTokenStudent, enrollmentController.update);
 
 /**
  * @openapi
@@ -157,7 +158,7 @@ router.put('/:id', enrollmentController.update);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', enrollmentController.delete);
+router.delete('/:id',middlewareController.verifyTokenAdmin , enrollmentController.delete);
 
 /**
  * @openapi

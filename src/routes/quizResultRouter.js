@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { submitQuiz, getQuizResult } = require('../controller/quizResultController');
-
+const middlewareController = require("../middleware/middlewareController");
 /**
  * @swagger
  * tags:
@@ -47,7 +47,7 @@ const { submitQuiz, getQuizResult } = require('../controller/quizResultControlle
  *       500:
  *         description: Server error
  */
-router.post('/submit', submitQuiz);
+router.post('/submit',middlewareController.verifyTokenStudent, submitQuiz);
 
 /**
  * @swagger

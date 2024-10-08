@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const courseController = require('../controller/CourseController'); // Đảm bảo đường dẫn đúng
 const upload = require('../middleware/upload'); // Import middleware upload
-
+const middlewareController = require("../middleware/middlewareController");
 
 /**
  * @openapi
@@ -82,7 +82,7 @@ router.get('/organization/:id',courseController.getCourseByOrganization);
  *       500:
  *         description: Server error
  */
-router.put('/:id/activate', courseController.changeActiveToTrue);
+router.put('/:id/activate',middlewareController.verifyTokenOrganizationOrAdmin, courseController.changeActiveToTrue);
 /**
  * @openapi
  * /api/courses/{id}:
@@ -160,7 +160,7 @@ router.put('/:id/activate', courseController.changeActiveToTrue);
  *       500:
  *         description: Server error
  */
-router.put('/:id', upload.single('image'), courseController.update);
+router.put('/:id',middlewareController.verifyTokenOrganizationOrAdmin, upload.single('image'), courseController.update);
 
 /**
  * @openapi
@@ -185,7 +185,7 @@ router.put('/:id', upload.single('image'), courseController.update);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', courseController.delete);
+router.delete('/:id',middlewareController.verifyTokenOrganizationOrAdmin, courseController.delete);
 /**
  * @openapi
  * /api/courses:
@@ -255,7 +255,7 @@ router.delete('/:id', courseController.delete);
  *       500:
  *         description: Server error
  */
-router.post('/', upload.single('image'), courseController.create);
+router.post('/', middlewareController.verifyTokenOr,upload.single('image'), courseController.create);
 
 /**
  * @openapi

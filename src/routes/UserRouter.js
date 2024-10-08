@@ -1,8 +1,9 @@
 const express = require("express");
 const route = express.Router();
 const userController = require("../controller/userController");
-const middlewareController = require("../controller/middlewareController");
 const upload = require("../middleware/upload");
+
+const middlewareController = require("../middleware/middlewareController");
 /**
  * @swagger
  * tags:
@@ -46,7 +47,7 @@ route.post("/send-code", userController.sendCode);
  *       500:
  *         description: Server error
  */
-route.get("/", userController.getAlluser);
+route.get("/",  userController.getAlluser);
 
 /**
  * @swagger
@@ -109,7 +110,7 @@ route.get("/:id", userController.getuser);
  *       500:
  *         description: Server error
  */
-route.put("/change-infor/:id", upload.single("avt"), userController.updateUser);
+route.put("/change-infor/:id",middlewareController.verifyTokenAdminOrSelf, upload.single("avt"), userController.updateUser);
 
 /**
  * @swagger
@@ -145,11 +146,11 @@ route.put("/change-infor/:id", upload.single("avt"), userController.updateUser);
  *       500:
  *         description: Server error
  */
-route.put("/change-password/:id", userController.changePassword);
+route.put("/change-password/:id", middlewareController.verifyTokenAdminOrSelf,userController.changePassword);
 
-route.put("/forgotpassword/:id", userController.forgotpassword);
+route.put("/forgotpassword/:id",middlewareController.verifyTokenAdminOrSelf, userController.forgotpassword);
 
 
-route.delete('/:id', userController.deleteUser);
+route.delete('/:id' ,middlewareController.verifyTokenAdminOrSelf, userController.deleteUser);
 
 module.exports = route;

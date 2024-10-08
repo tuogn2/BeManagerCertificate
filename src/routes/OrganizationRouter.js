@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const organizationController = require('../controller/organizationController');
 const upload = require('../middleware/upload');
+const middlewareController = require("../middleware/middlewareController");
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ const upload = require('../middleware/upload');
  *       500:
  *         description: Server error
  */
-router.post('/', upload.single('avatar'), organizationController.createOrganization);
+router.post('/',middlewareController.verifyTokenAdmin, upload.single('avatar'), organizationController.createOrganization);
 
 router.get('/courses-count', organizationController.getOrganizationNamesAndCourseCount);
 
@@ -113,9 +114,9 @@ router.get('/:id', organizationController.getOrganizationById);
  *       500:
  *         description: Server error
  */
-router.put('/:id/activate', organizationController.changeIsActiveTrue);
+router.put('/:id/activate',middlewareController.verifyTokenAdminOrSelf, organizationController.changeIsActiveTrue);
 
-router.put("/:id/change-password", organizationController.changePassword);
+router.put("/:id/change-password",middlewareController.verifyTokenAdminOrSelf, organizationController.changePassword);
 /**
  * @swagger
  * /organizations/{id}:
@@ -160,7 +161,7 @@ router.put("/:id/change-password", organizationController.changePassword);
  *       500:
  *         description: Server error
  */
-router.put('/:id', upload.single('avatar'), organizationController.updateOrganization);
+router.put('/:id',middlewareController.verifyTokenAdminOrSelf, upload.single('avatar'), organizationController.updateOrganization);
 
 /**
  * @swagger
@@ -183,7 +184,7 @@ router.put('/:id', upload.single('avatar'), organizationController.updateOrganiz
  *       500:
  *         description: Server error
  */
-router.delete('/:id', organizationController.deleteOrganization);
+router.delete('/:id',middlewareController.verifyTokenAdminOrSelf, organizationController.deleteOrganization);
 
 
 

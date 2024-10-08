@@ -3,7 +3,7 @@ const router = express.Router();
 const courseBundleController = require('../controller/CourseBundleController');
 const upload = require('../middleware/upload'); // Import middleware upload
 
-
+const middlewareController = require("../middleware/middlewareController");
 
 
 // New search route
@@ -82,7 +82,7 @@ router.get('/:organizationId', courseBundleController.getByOrganization);
  *       400:
  *         description: Error creating course bundle
  */
-router.post('/',upload.single('image'), courseBundleController.create);
+router.post('/',middlewareController.verifyTokenOrganizationOrAdmin,upload.single('image'), courseBundleController.create);
 
 /**
  * @openapi
@@ -219,7 +219,7 @@ router.get('/getid/:id', courseBundleController.getById);
  *       400:
  *         description: Error updating course bundle
  */
-router.put('/:id',upload.single('image'), courseBundleController.update);
+router.put('/:id',middlewareController.verifyTokenOrganizationOrAdmin,upload.single('image'), courseBundleController.update);
 
 /**
  * @openapi
@@ -243,6 +243,6 @@ router.put('/:id',upload.single('image'), courseBundleController.update);
  *       500:
  *         description: Error deleting course bundle
  */
-router.delete('/:id', courseBundleController.delete);
+router.delete('/:id', middlewareController.verifyTokenOrganizationOrAdmin,courseBundleController.delete);
 
 module.exports = router;

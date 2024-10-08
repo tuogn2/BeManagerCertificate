@@ -17,7 +17,6 @@ class CertificateController {
         organization: organizationId,
         bunbles: bunbles,      
       } = req.body;
-  
       try {
         // Fetch the user, organization, and course from the database
         const user = await User.findById(userId);
@@ -60,13 +59,15 @@ class CertificateController {
         // Gọi hợp đồng thông minh để cập nhật chứng chỉ trên blockchain
   
         await contract.methods
-          .addCertificateDetails(
+          .createCertificate(
             bunbles, // ID khóa học (courseId từ MongoDB)
             userId, // ID sinh viên (userId từ MongoDB)
-            "thisishash", // Hash của chứng chỉ (nếu có, có thể là một hash duy nhất được tạo dựa trên thông tin chứng chỉ)
-            100, // Điểm số của sinh viên
+            user?.name, // Tên sinh viên,
+            organization?.name,
             savedCertificate.certificateId, // ID chứng chỉ (UUID được tạo trong MongoDB)
+            "thisishash", // Hash của chứng chỉ (nếu có, có thể là một hash duy nhất được tạo dựa trên thông tin chứng chỉ)
             certificateImageUrl, // URL của ảnh chứng chỉ (được tải lên Cloudinary)
+            100, // Điểm số của sinh viên
             true // Trạng thái hoàn thành khóa học
           )
           .send({ from: web3.eth.defaultAccount }); // Địa chỉ ví Ethereum thực hiện giao dịch
