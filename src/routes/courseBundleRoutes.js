@@ -9,6 +9,8 @@ const middlewareController = require("../middleware/middlewareController");
 // New search route
 router.get("/search", courseBundleController.search);
 
+router.get("/countCourseBundle", courseBundleController.countCoursesBunble);
+
 /**
  * @openapi
  * /api/course-bundles/organization/{organizationId}:

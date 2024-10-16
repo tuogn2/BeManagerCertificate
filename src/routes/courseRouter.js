@@ -29,6 +29,9 @@ const middlewareController = require("../middleware/middlewareController");
  */
 router.get('/search', courseController.search);
 
+router.get('/countCourse', courseController.countCourses);
+
+
 /**
  * @openapi
  * /api/courses/inactive:

@@ -153,6 +153,8 @@ class CourseController {
     }
   }
 
+
+
   // Lấy khóa học theo ID
   async getById(req, res) {
     const courseId = req.params.id;
@@ -325,6 +327,18 @@ class CourseController {
       return res.status(500).json({ message: "Server error" });
     }
   }
+
+
+  async countCourses(req, res) {
+    try {
+      const totalCourses = await Course.countDocuments();
+      return res.status(200).json({ totalCourses });
+    } catch (error) {
+      console.error("Error counting courses:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+
 }
 
 module.exports = new CourseController();

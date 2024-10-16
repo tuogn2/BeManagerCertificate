@@ -158,13 +158,33 @@ class EnrollmentController {
 
   async getEnrollmentsByUser(req, res) {
     const userId = req.params.userId;
-    console.log(userId);
 
     try {
       // Find all enrollments for the user
       const enrollments = await Enrollment.find({ user: userId }).populate(
         "course"
       );
+
+      if (!enrollments || enrollments.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No enrollments found for this user" });
+      }
+
+      return res.status(200).json(enrollments);
+    } catch (error) {
+      console.error("Error retrieving enrollments:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+  async getEnrollmentsByUserHaveBunbleAndCourse(req, res) {
+    const userId = req.params.userId;
+
+    try {
+      // Find all enrollments for the user
+      const enrollments = await Enrollment.find({ user: userId }).populate(
+        "course"
+      ).populate("bundle");
 
       if (!enrollments || enrollments.length === 0) {
         return res

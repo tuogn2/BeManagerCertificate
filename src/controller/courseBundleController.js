@@ -191,6 +191,16 @@ class CourseBundleController {
       res.status(500).json({ message: "Error deleting course bundle", error });
     }
   }
+
+
+  async countCoursesBunble(req, res) {
+    try {
+      const count = await CourseBundle.countDocuments();
+      res.status(200).json({ count });
+    } catch (error) {
+      res.status(500).json({ message: "Error counting course bundles", error });
+    }
+  }
 }
 
 module.exports = new CourseBundleController();

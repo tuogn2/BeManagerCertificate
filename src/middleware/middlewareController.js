@@ -94,7 +94,6 @@ class middlewareController {
         if (err) {
           return res.status(403).json("Token is not  valid");
         }
-
         if (user.role !== "organization" &&user.role !== "admin") {
           return res.status(403).json("You're not a organization");
         }

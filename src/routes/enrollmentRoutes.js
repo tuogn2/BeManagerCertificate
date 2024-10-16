@@ -184,5 +184,6 @@ router.delete('/:id',middlewareController.verifyTokenAdmin , enrollmentControlle
  *         description: Server error
  */
 router.get('/user/:userId', enrollmentController.getEnrollmentsByUser);
+router.get('/userHaveBunbleAndCourse/:userId', enrollmentController.getEnrollmentsByUserHaveBunbleAndCourse);
 
 module.exports = router;

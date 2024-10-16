@@ -23,7 +23,7 @@
   app.use(morgan("combined"));
   
   app.use(cors({
-      origin: 'http://localhost:5173',
+      origin: ['http://localhost:5173', 'http://172.26.16.1:8081','exp://192.168.1.3:8081'],
       credentials: true
   }));
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
