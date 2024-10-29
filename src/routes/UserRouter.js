@@ -35,6 +35,8 @@ const middlewareController = require("../middleware/middlewareController");
  */
 route.post("/send-code", userController.sendCode);
 
+route.get("/getuserbyemail/:email", userController.getUserByEmail);
+
 /**
  * @swagger
  * /users:

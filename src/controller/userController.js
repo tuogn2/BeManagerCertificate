@@ -61,6 +61,24 @@ class userController {
     }
   }
 
+
+  async getUserByEmail(req, res) {
+    const { email } = req.params;
+
+    try {
+      const user = await users.findOne
+      ({ email }).select("-password");
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      return res.status(200).json(user);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
   // Method to send verification code
   async sendCode(req, res) {
     const { email } = req.body;
@@ -91,8 +109,6 @@ class userController {
       res.status(200).json({ message: "Verification code sent", code });
     });
   }
-
-  
 
   async updateUser(req, res) {
     const userId = req.params.id;

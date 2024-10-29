@@ -8,7 +8,6 @@ class EnrollmentController {
 
   async createBundleEnrollment(req, res) {
     const { user, bundle } = req.body; // Assume bundle ID is passed in the request body
-    console.log(user, bundle);
     try {
       // Find the CourseBundle by ID
       const bundleData = await CourseBundle.findById(bundle);
@@ -17,12 +16,18 @@ class EnrollmentController {
       if (!bundleData) {
         return res.status(404).json({ message: "CourseBundle not found" });
       }
-      console.log(bundleData);
+
+      const existingEnrollment = await Enrollment.findOne({ user, bundle });
+
+      if (existingEnrollment) {
+        return res.status(400).json({ message: "User already enrolled in this bundle" });
+      }
       // Create a new Enrollment for the bundle
       const enrollment = new Enrollment({
         user,
         bundle, // Assuming you have a field for bundle in your Enrollment model
         numborOfCourses: bundleData.courses.length, // Set the number of courses in the bundle
+        completed: true, // Set the completed field to false by default
       });
 
       // Save the Enrollment to the database
@@ -55,6 +60,15 @@ class EnrollmentController {
       if (!courseData) {
         return res.status(404).json({ message: "Course not found" });
       }
+
+      const existingEnrollment = await Enrollment.findOne({ user, course });
+
+      if (existingEnrollment) {
+        return res
+          .status(400)
+          .json({ message: "User already enrolled in this course" });
+      }
+
       const numborOfCourses = courseData.documents.length + 1;
       // Tạo một Enrollment mới
       const enrollment = new Enrollment({
@@ -182,9 +196,9 @@ class EnrollmentController {
 
     try {
       // Find all enrollments for the user
-      const enrollments = await Enrollment.find({ user: userId }).populate(
-        "course"
-      ).populate("bundle");
+      const enrollments = await Enrollment.find({ user: userId })
+        .populate("course")
+        .populate("bundle");
 
       if (!enrollments || enrollments.length === 0) {
         return res
