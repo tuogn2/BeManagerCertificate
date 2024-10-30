@@ -148,7 +148,7 @@ route.put("/change-infor/:id",middlewareController.verifyTokenAdminOrSelf, uploa
  *       500:
  *         description: Server error
  */
-route.put("/change-password/:id", middlewareController.verifyTokenAdminOrSelf,userController.changePassword);
+route.put("/change-password/:id", userController.changePassword);
 
 route.put("/forgotpassword/:id",middlewareController.verifyTokenAdminOrSelf, userController.forgotpassword);
 
