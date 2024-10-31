@@ -8,6 +8,7 @@ const courseBundleRouter = require("./courseBundleRoutes");
 const enrollmentRouter = require("./enrollmentRoutes");
 const QuizRouter = require("./quizResultRouter");
 const statsRouter = require("./statsRouter");
+const statsOrRouter = require("./statsOrganizationRouter");
 function router(app) {
   app.use("/api/v1/users", UserRouter);
   app.use("/api/v1/auth", authRouter);
@@ -18,6 +19,7 @@ function router(app) {
   app.use("/api/v1/enrollment", enrollmentRouter);
   app.use("/api/v1/quiz", QuizRouter);
   app.use("/api/v1/stats", statsRouter);
+  app.use("/api/v1/statsOr", statsOrRouter);
 }
 
 module.exports = router;
