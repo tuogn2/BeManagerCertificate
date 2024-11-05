@@ -7,6 +7,7 @@ const Course = require("../models/Course");
 const CourseBundle = require("../models/CourseBundle");
 const Enrollment = require("../models/Enrollment");
 
+const mongoose = require("mongoose");
 class StatsController {
   // Định nghĩa hàm getModelByType đúng cách
   getModelByType(type) {
@@ -222,9 +223,7 @@ async getTopBundleEnrollments(req, res) {
       ]);
 
       // Kiểm tra nếu không tìm thấy enrollments nào
-      if (topEnrollments.length === 0) {
-          return res.status(404).json({ message: "No enrollments found for the specified month and year." });
-      }
+      
 
       res.status(200).json({ topEnrollments });
   } catch (error) {
@@ -365,6 +364,60 @@ async getTopCertificatesByBundle(req, res) {
           error: "Failed to fetch top certificates by bundle",
           details: error.message,
       });
+  }
+}
+ 
+
+async getUserStats(req, res) {
+  const { id:userId } = req.params;
+
+  // Chuyển đổi userId thành ObjectId nếu cần thiết
+  const objectIdUserId = new mongoose.Types.ObjectId(userId);
+
+  try {
+    // Tổng số khóa học mà người dùng đã đăng ký (enrolled courses)
+    const totalEnrollments = await Enrollment.countDocuments({ user: objectIdUserId });
+
+    // Tổng số chứng chỉ của người dùng
+    const totalCertificates = await Certificate.countDocuments({ user: objectIdUserId });
+
+    // Tổng số chứng chỉ theo bundle
+    const totalBundleCertificates = await Certificate.countDocuments({
+      user: objectIdUserId,
+      bundle: { $ne: null },
+    });
+
+    // Tính điểm trung bình của người dùng từ các chứng chỉ
+    const avgScoreData = await Certificate.aggregate([
+      {
+        $match: {
+          user: objectIdUserId, // Sử dụng objectIdUserId
+          score: { $exists: true, $ne: null }, // Đảm bảo score tồn tại
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          avgScore: { $avg: "$score" }, // Tính trung bình điểm số
+        },
+      },
+    ]);
+
+    const avgScore = avgScoreData.length > 0 ? avgScoreData[0].avgScore : 0;
+
+    // Trả về dữ liệu thống kê
+    res.status(200).json({
+      totalEnrollments,
+      totalCertificates,
+      totalBundleCertificates,
+      avgScore,
+    });
+  } catch (error) {
+    console.error("Error fetching user stats:", error);
+    res.status(500).json({
+      error: "Failed to fetch user stats",
+      details: error.message,
+    });
   }
 }
 

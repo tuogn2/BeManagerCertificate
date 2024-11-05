@@ -13,4 +13,5 @@ route.get('/top-enrollments-bundle', statsController.getTopBundleEnrollments);
 route.get('/top-certificates-course', statsController.getTopCertificates);
 route.get('/top-certificates-bundle', statsController.getTopCertificatesByBundle);
 
+route.get('/user-stats/:id', statsController.getUserStats);
 module.exports = route;
