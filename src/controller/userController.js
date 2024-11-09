@@ -83,6 +83,12 @@ class userController {
   async sendCode(req, res) {
     const { email } = req.body;
 
+
+    const user = await users.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     // Generate a 6-digit verification code
     const code = Math.floor(100000 + Math.random() * 900000);
 
@@ -116,7 +122,6 @@ class userController {
     const avt = req.file;
 
     try {
-
         // Check if another user exists with the same email (excluding the current user)
         const existingUser = await users.findOne({ email, _id: { $ne: userId } });
         const existingOrganization = await Organization.findOne({ email, _id: { $ne: userId } });

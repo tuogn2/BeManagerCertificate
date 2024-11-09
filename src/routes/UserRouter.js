@@ -150,7 +150,7 @@ route.put("/change-infor/:id",middlewareController.verifyTokenAdminOrSelf, uploa
  */
 route.put("/change-password/:id", userController.changePassword);
 
-route.put("/forgotpassword/:id",middlewareController.verifyTokenAdminOrSelf, userController.forgotpassword);
+route.put("/forgotpassword/:id", userController.forgotpassword);
 
 
 route.delete('/:id' ,middlewareController.verifyTokenAdminOrSelf, userController.deleteUser);

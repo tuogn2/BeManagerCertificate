@@ -74,7 +74,7 @@ class middlewareController {
         if (err) {
           return res.status(403).json("Token is not  valid");
         }
-        console.log(user);
+        
         if (user.role !== "admin") {
           return res.status(403).json("You're not a admin");
         }
@@ -88,13 +88,17 @@ class middlewareController {
 
   async verifyTokenOrganizationOrAdmin(req, res, next) {
     const token = req.headers.authorization;
+    console.log(token);
     if (token) {
+
       const accessToken = token.split(" ")[1];
       jwt.verify(accessToken, process.env.JWT_Access_Key, (err, user) => {
+        
         if (err) {
           return res.status(403).json("Token is not  valid");
         }
-        if (user.role !== "organization" &&user.role !== "admin") {
+        
+        if (user.role !== "organization" && user.role !== "admin") {
           return res.status(403).json("You're not a organization");
         }
         req.user = user;
@@ -106,7 +110,7 @@ class middlewareController {
   }
   async verifyTokenAdminOrSelf(req, res, next) {
     const token = req.headers.authorization;
-    console.log(token);
+    console.log("hi",token);
     if (token) {
       const accessToken = token.split(" ")[1];
       jwt.verify(accessToken, process.env.JWT_Access_Key, (err, user) => {

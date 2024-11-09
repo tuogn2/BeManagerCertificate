@@ -125,7 +125,7 @@ class OrganizationController {
     try {
 
       if(email){
-        const existingOrganization = await Organization.findOne({ email });
+        const existingOrganization = await Organization.findOne({ email, _id: { $ne: orgId } });
         if (existingOrganization) {
           return res.status(400).json({ message: "Email already exists" });
         }

@@ -114,7 +114,7 @@ router.get('/:id', organizationController.getOrganizationById);
  *       500:
  *         description: Server error
  */
-router.put('/:id/activate',middlewareController.verifyTokenAdminOrSelf, organizationController.changeIsActiveTrue);
+router.put('/:id/activate',middlewareController.verifyTokenAdmin, organizationController.changeIsActiveTrue);
 
 router.put("/:id/change-password",middlewareController.verifyTokenAdminOrSelf, organizationController.changePassword);
 /**
