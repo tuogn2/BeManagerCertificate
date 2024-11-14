@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --inspect index.js",
-    "render-build": "npm install && npm rebuild bcrypt --build-from-source"
+    "start": "nodemon --inspect index.js"
   },
   "keywords": [],
   "author": "",
