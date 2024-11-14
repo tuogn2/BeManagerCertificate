@@ -1,6 +1,5 @@
 const Course = require("../models/Course"); // Đảm bảo đường dẫn đúng đến mô hình Course
 const cloudinary = require("cloudinary").v2;
-const bcrypt = require("bcryptjs");
 const Enrollment = require("../models/Enrollment");
 const Organization = require("../models/Organization");
 const CourseBundle = require("../models/CourseBundle");

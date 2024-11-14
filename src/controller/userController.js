@@ -1,5 +1,5 @@
 const users = require("../models/User");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const cloudinary = require("cloudinary").v2;
 const nodemailer = require("nodemailer");
 const Organization = require("../models/Organization"); // Đảm bảo đường dẫn đúng đến mô hình Organization
