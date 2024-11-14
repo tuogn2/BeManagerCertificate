@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { submitQuiz, getQuizResult } = require('../controller/quizResultController');
-const middlewareController = require("../middleware/middlewareController");
+const { submitQuiz, getQuizResult } = require('@controllers/quizResultController'); // Sử dụng alias @controllers
+const middlewareController = require('@middleware/middlewareController'); // Sử dụng alias @middleware
+
 /**
  * @swagger
  * tags:

@@ -1,12 +1,15 @@
-// Import các model
-const mongoose = require('mongoose'); // Thêm dòng này
-const User = require("../models/User");
-const Organization = require("../models/Organization");
-const Certificate = require("../models/Certificate");
-const QuizResult = require("../models/quizResult");
-const Course = require("../models/Course");
-const CourseBundle = require("../models/CourseBundle");
-const Enrollment = require("../models/Enrollment");
+
+// Thêm dòng này
+const mongoose = require('mongoose'); // Đảm bảo kết nối MongoDB
+
+// Sử dụng alias thay vì đường dẫn tương đối
+const User = require('@models/User');
+const Organization = require('@models/Organization');
+const Certificate = require('@models/Certificate');
+const QuizResult = require('@models/QuizResult');
+const Course = require('@models/Course');
+const CourseBundle = require('@models/CourseBundle');
+const Enrollment = require('@models/Enrollment');
 
 class statsOrganizationController {
   // Định nghĩa hàm getModelByType đúng cách

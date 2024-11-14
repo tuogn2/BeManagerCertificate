@@ -1,8 +1,8 @@
-const users = require("../models/User");
-const Organization = require("../models/Organization");
+const users = require('@models/User');
+const Organization = require('@models/Organization');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { sendEmail } = require("../utils/mailService");
+const { sendEmail } = require('@utils/mailService');
 
 const crypto = require("crypto");
 class userController {

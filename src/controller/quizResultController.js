@@ -1,6 +1,8 @@
-const QuizResult = require("../models/quizResult");
-const Course = require("../models/Course");
-const Enrollment = require("../models/Enrollment");
+
+
+const QuizResult = require('@models/QuizResult');
+const Course = require('@models/Course');
+const Enrollment = require('@models/Enrollment');
 
 class QuizResultController {
   async submitQuiz(req, res) {

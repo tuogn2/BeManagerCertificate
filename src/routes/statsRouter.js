@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
-const statsController = require('../controller/statsController');
+const statsController = require('@controllers/statsController'); // Sử dụng alias @controllers
+
 
 // Biểu đồ cột
 route.get('/bar-chart', statsController.getBarChartData);

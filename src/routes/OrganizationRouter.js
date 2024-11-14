@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const organizationController = require('../controller/organizationController');
-const upload = require('../middleware/upload');
-const middlewareController = require("../middleware/middlewareController");
+const organizationController = require('@controllers/organizationController'); // Sử dụng alias @controllers
+const upload = require('@middleware/upload'); // Sử dụng alias @middleware
+const middlewareController = require('@middleware/middlewareController'); // Sử dụng alias @middleware
+
 
 /**
  * @swagger

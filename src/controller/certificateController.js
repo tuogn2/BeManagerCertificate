@@ -1,10 +1,10 @@
-const Certificate = require("../models/Certificate");
-const User = require("../models/User");
-const QuizResult = require("../models/quizResult");
-const Course = require("../models/Course");
-const CourseBundle = require("../models/CourseBundle");
-const Organization = require("../models/Organization");
 const { v4: uuidv4 } = require("uuid");
+const Certificate = require('@models/Certificate');
+const User = require('@models/User');
+const Course = require('@models/Course');
+const CourseBundle = require('@models/CourseBundle');
+const Organization = require('@models/Organization');
+
 
 const createCertificateImage = require("../utils/createCertificateImage");
 

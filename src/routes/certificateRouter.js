@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const certificateController = require("../controller/certificateController");
-
-const middlewareController = require("../middleware/middlewareController");
+const certificateController = require("@controllers/certificateController"); // Sử dụng alias @controllers
+const middlewareController = require("@middleware/middlewareController"); // Sử dụng alias @middleware
 
 router.post("/createCertificateBunble",middlewareController.verifyTokenStudent, certificateController.createCertificateOfBunble);
 

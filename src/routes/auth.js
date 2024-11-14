@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
-const authController = require('../controller/authController');
+const authController = require('@controllers/authController'); // Sử dụng alias @controllers
+
 
 /**
  * @swagger

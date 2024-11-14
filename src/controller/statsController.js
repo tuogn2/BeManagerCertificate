@@ -1,11 +1,13 @@
 // Import các model
-const User = require("../models/User");
-const Organization = require("../models/Organization");
-const Certificate = require("../models/Certificate");
-const QuizResult = require("../models/quizResult");
-const Course = require("../models/Course");
-const CourseBundle = require("../models/CourseBundle");
-const Enrollment = require("../models/Enrollment");
+// Sử dụng alias thay vì đường dẫn tương đối
+const User = require('@models/User');
+const Organization = require('@models/Organization');
+const Certificate = require('@models/Certificate');
+const QuizResult = require('@models/QuizResult');
+const Course = require('@models/Course');
+const CourseBundle = require('@models/CourseBundle');
+const Enrollment = require('@models/Enrollment');
+
 
 const mongoose = require("mongoose");
 class StatsController {

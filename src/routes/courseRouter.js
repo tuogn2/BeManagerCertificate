@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const courseController = require('../controller/CourseController'); // Đảm bảo đường dẫn đúng
-const upload = require('../middleware/upload'); // Import middleware upload
-const middlewareController = require("../middleware/middlewareController");
+const courseController = require('@controllers/courseController'); // Sử dụng alias @controllers
+const upload = require('@middleware/upload'); // Sử dụng alias @middleware
+const middlewareController = require('@middleware/middlewareController'); // Sử dụng alias @middleware
 
 /**
  * @openapi

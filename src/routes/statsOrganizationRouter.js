@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
-const statsOrganizationController = require('../controller/statsOrganizationController');
+const statsOrganizationController = require('@controllers/statsOrganizationController'); // Sử dụng alias @controllers
+
 
 // Biểu đồ cột
 

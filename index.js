@@ -5,7 +5,7 @@
   const bodyParser = require('body-parser');
   const cookieParser = require('cookie-parser');
   const path = require('path');
-
+  require('module-alias/register');
   const db = require('./src/configs/db/index.js');
   const router = require("./src/routes/index.js");
   const cloudinary = require('cloudinary').v2;

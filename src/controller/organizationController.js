@@ -1,8 +1,7 @@
-const Organization = require("../models/Organization"); // Đảm bảo đường dẫn đúng đến mô hình Organization
-const bcrypt = require("bcryptjs");
-const cloudinary = require("cloudinary").v2;
-const users = require("../models/User");
-
+const Organization = require('@models/Organization');
+const bcrypt = require('bcryptjs');
+const cloudinary = require('cloudinary').v2;
+const users = require('@models/User');
 class OrganizationController {
   // Tạo tổ chức mới
   async createOrganization(req, res) {

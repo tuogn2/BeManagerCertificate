@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const courseBundleController = require('../controller/CourseBundleController');
-const upload = require('../middleware/upload'); // Import middleware upload
+const courseBundleController = require('@controllers/courseBundleController'); // Sử dụng alias @controllers
+const upload = require('@middleware/upload'); // Sử dụng alias @middleware
+const middlewareController = require('@middleware/middlewareController'); // Sử dụng alias @middleware
 
-const middlewareController = require("../middleware/middlewareController");
 
 
 // New search route

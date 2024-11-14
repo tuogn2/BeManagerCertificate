@@ -1,7 +1,10 @@
-const Enrollment = require("../models/Enrollment");
-const users = require("../models/User");
-const Course = require("../models/Course");
-const CourseBundle = require("../models/CourseBundle");
+
+// Sử dụng alias thay vì đường dẫn tương đối
+const Enrollment = require('@models/Enrollment');
+const users = require('@models/User');
+const Course = require('@models/Course');
+const CourseBundle = require('@models/CourseBundle');
+
 
 class EnrollmentController {
   // Tạo mới một enrollment

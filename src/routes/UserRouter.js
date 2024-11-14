@@ -1,9 +1,9 @@
 const express = require("express");
 const route = express.Router();
-const userController = require("../controller/userController");
-const upload = require("../middleware/upload");
+const userController = require('@controllers/userController'); // Sử dụng alias @controllers
+const upload = require('@middleware/upload'); // Sử dụng alias @middleware
+const middlewareController = require('@middleware/middlewareController'); // Sử dụng alias @middleware
 
-const middlewareController = require("../middleware/middlewareController");
 /**
  * @swagger
  * tags:

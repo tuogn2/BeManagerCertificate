@@ -1,6 +1,10 @@
-const CourseBundle = require("../models/CourseBundle");
-const Enrollment = require("../models/Enrollment");
-const cloudinary = require("cloudinary").v2;
+
+
+// Sử dụng alias trong require
+const CourseBundle = require('@models/CourseBundle');
+const Enrollment = require('@models/Enrollment');
+const cloudinary = require('cloudinary').v2;
+
 
 class CourseBundleController {
   // Tạo một course bundle mới

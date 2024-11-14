@@ -1,8 +1,11 @@
-const Course = require("../models/Course"); // Đảm bảo đường dẫn đúng đến mô hình Course
-const cloudinary = require("cloudinary").v2;
-const Enrollment = require("../models/Enrollment");
-const Organization = require("../models/Organization");
-const CourseBundle = require("../models/CourseBundle");
+
+
+// Sử dụng alias trong require
+const Course = require('@models/Course');
+const cloudinary = require('cloudinary').v2;
+const Enrollment = require('@models/Enrollment');
+// const Organization = require('@models/Organization');
+const CourseBundle = require('@models/CourseBundle');
 
 class CourseController {
   // Tạo khóa học mới
