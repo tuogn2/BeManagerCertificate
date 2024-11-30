@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --inspect index.js",
-    "postinstall": "npx puppeteer install"
+    "start": "nodemon --inspect index.js"
   },
   "keywords": [],
   "author": "",

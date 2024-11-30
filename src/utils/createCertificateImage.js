@@ -1,22 +1,17 @@
-const puppeteer = require("puppeteer-core"); // Sử dụng puppeteer-core thay vì puppeteer
+const puppeteer = require("puppeteer");
 const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 
-async function createCertificateImage(certificateData) {
-  // Đảm bảo đường dẫn đúng với Chromium đã được cài đặt
-  const browser = await puppeteer.launch({
-    headless: true, // Chạy chế độ headless
-    args: [
-      '--no-sandbox', // Bỏ sandbox để tránh lỗi trên môi trường production
-      '--disable-setuid-sandbox', // Cờ an toàn bổ sung cho sandbox
-      '--disable-dev-shm-usage', // Để tránh lỗi bộ nhớ
-      '--disable-gpu', // Tắt GPU acceleration
-      '--single-process' // Chạy trên 1 process
-    ],
-    executablePath: '/opt/render/.cache/puppeteer/chrome', // Đảm bảo rằng Puppeteer sử dụng đúng Chromium path
-  });
+// cloudinary.config({
+//   cloud_name: "your_cloud_name",
+//   api_key: "your_api_key",
+//   api_secret: "your_api_secret",
+// });
 
+async function createCertificateImage(certificateData) {
+  // Tạo trình duyệt và trang mới
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
   // Tạo nội dung HTML cho chứng chỉ
@@ -117,10 +112,9 @@ async function createCertificateImage(certificateData) {
   </body>
   </html>
   `;
-
+  
   // Đặt nội dung HTML vào trang
   await page.setContent(htmlContent);
-  
   // Tạo đường dẫn cho file ảnh tạm thời
   const imagePath = path.join(__dirname, "certificate.png");
 
@@ -132,10 +126,8 @@ async function createCertificateImage(certificateData) {
 
   // Tải ảnh lên Cloudinary
   const result = await cloudinary.uploader.upload(imagePath);
-
   // Xóa file ảnh tạm thời
   fs.unlinkSync(imagePath);
-
   // Trả về URL của ảnh trên Cloudinary
   return result.secure_url;
 }
