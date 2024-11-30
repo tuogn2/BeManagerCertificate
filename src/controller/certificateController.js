@@ -47,6 +47,7 @@ class CertificateController {
           organizationAvt: organization.avatar,
           courseName: courseBundle.title,
           score: 100,
+          isBundle: true,
         });
   
         // Update the certificate with the image URL
