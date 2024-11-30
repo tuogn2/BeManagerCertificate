@@ -56,7 +56,7 @@ router.post("/createCertificateBunble",middlewareController.verifyTokenStudent, 
  *       400:
  *         description: Error creating certificate
  */
-router.post("/", middlewareController.verifyTokenStudent,certificateController.create);
+router.post("/", middlewareController.verifyTokenStudent,certificateController.createCertificateforcourse);
 
 /**
  * @openapi

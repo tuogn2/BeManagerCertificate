@@ -83,7 +83,7 @@ class CertificateController {
       }
     }
 
-  async create(req, res) {
+  async createCertificateforcourse(req, res) {
     const {
       user: userId,
       organization: organizationId,
@@ -97,6 +97,7 @@ class CertificateController {
       const organization = await Organization.findById(organizationId);
       const course = await Course.findById(courseId);
 
+      
       if (!user || !organization || !course) {
         return res
           .status(404)
