@@ -8,6 +8,7 @@ const middlewareController = require('@middleware/middlewareController'); // Sá»
 
 // New search route
 router.get("/search", courseBundleController.search);
+router.get("/pagination", courseBundleController.getAllPagination);
 
 router.get("/countCourseBundle", courseBundleController.countCoursesBunble);
 

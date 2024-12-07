@@ -260,6 +260,10 @@ router.delete('/:id',middlewareController.verifyTokenOrganizationOrAdmin, course
  */
 router.post('/', middlewareController.verifyTokenOr,upload.single('image'), courseController.create);
 
+
+router.get('/pagination', courseController.getAllPagination);
+
+
 /**
  * @openapi
  * /api/courses/{id}:

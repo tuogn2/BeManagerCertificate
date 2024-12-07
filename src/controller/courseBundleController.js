@@ -64,7 +64,6 @@ class CourseBundleController {
   // Đọc thông tin về một course bundle theo ID
   async getById(req, res) {
     try {
-      
       const courseBundle = await CourseBundle.findById(req.params.id)
         .populate("courses")
         .populate("organization");
@@ -98,7 +97,41 @@ class CourseBundleController {
     }
   }
   
-
+  async getAllPagination(req, res) {
+    try {
+      // Lấy limit và page từ query parameters, mặc định limit = 6, page = 1
+      const limit = parseInt(req.query.limit) || 6;
+      const page = parseInt(req.query.page) || 1;
+  
+      // Tính toán offset (số bản ghi cần bỏ qua)
+      const skip = (page - 1) * limit;
+  
+      // Tìm và phân trang các bundle
+      const courseBundles = await CourseBundle.find()
+        .populate("courses") // Populate the courses field
+        .populate("organization") // Populate the organization field
+        .skip(skip) // Bỏ qua các bản ghi theo trang
+        .limit(limit); // Giới hạn số lượng bản ghi trả về
+  
+      // Tính tổng số bản ghi và tổng số trang
+      const totalCount = await CourseBundle.countDocuments();
+      const totalPages = Math.ceil(totalCount / limit); // Tính tổng số trang
+  
+      return res.status(200).json({
+        data: courseBundles,
+        meta: {
+          totalCount,
+          totalPages,
+          currentPage: page,
+          limit,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching course bundles:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+  
   // Tìm kiếm các course bundles
   async search(req, res) {
     const { query, limit = 2 } = req.query; // Nhận truy vấn tìm kiếm từ tham số URL và giới hạn kết quả

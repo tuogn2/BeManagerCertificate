@@ -155,6 +155,42 @@ class CourseController {
     }
   }
 
+  async getAllPagination(req, res) {
+    try {
+      // Lấy thông tin `page` và `limit` từ query parameters, thiết lập giá trị mặc định nếu không có
+      const page = parseInt(req.query.page) || 1; // Trang mặc định là 1
+      const limit = parseInt(req.query.limit) || 6; // Giới hạn mặc định là 6
+  
+      // Tính toán `skip` dựa trên trang hiện tại
+      const skip = (page - 1) * limit;
+  
+      // Tìm các khóa học có `isActive: true`, phân trang và populate "organization"
+      const courses = await Course.find({ isActive: true })
+        .populate("organization")
+        .skip(skip) // Bỏ qua số lượng item tương ứng
+        .limit(limit); // Lấy số lượng item giới hạn
+  
+      // Đếm tổng số khóa học có `isActive: true`
+      const totalCourses = await Course.countDocuments({ isActive: true });
+  
+      // Tính toán tổng số trang
+      const totalPages = Math.ceil(totalCourses / limit);
+  
+      // Trả về dữ liệu với thông tin phân trang
+      return res.status(200).json({
+        data: courses,
+        meta: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalCourses,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+  
 
 
   // Lấy khóa học theo ID
