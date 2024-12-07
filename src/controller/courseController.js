@@ -1,12 +1,10 @@
-
-
 // Sử dụng alias trong require
-const Course = require('@models/Course');
-const cloudinary = require('cloudinary').v2;
-const Enrollment = require('@models/Enrollment');
+const Course = require("@models/Course");
+const cloudinary = require("cloudinary").v2;
+const Enrollment = require("@models/Enrollment");
 // const Organization = require('@models/Organization');
-const CourseBundle = require('@models/CourseBundle');
-
+const CourseBundle = require("@models/CourseBundle");
+const { sendEmail } = require("@utils/mailService");
 class CourseController {
   // Tạo khóa học mới
   async create(req, res) {
@@ -160,22 +158,22 @@ class CourseController {
       // Lấy thông tin `page` và `limit` từ query parameters, thiết lập giá trị mặc định nếu không có
       const page = parseInt(req.query.page) || 1; // Trang mặc định là 1
       const limit = parseInt(req.query.limit) || 6; // Giới hạn mặc định là 6
-  
+
       // Tính toán `skip` dựa trên trang hiện tại
       const skip = (page - 1) * limit;
-  
+
       // Tìm các khóa học có `isActive: true`, phân trang và populate "organization"
       const courses = await Course.find({ isActive: true })
         .populate("organization")
         .skip(skip) // Bỏ qua số lượng item tương ứng
         .limit(limit); // Lấy số lượng item giới hạn
-  
+
       // Đếm tổng số khóa học có `isActive: true`
       const totalCourses = await Course.countDocuments({ isActive: true });
-  
+
       // Tính toán tổng số trang
       const totalPages = Math.ceil(totalCourses / limit);
-  
+
       // Trả về dữ liệu với thông tin phân trang
       return res.status(200).json({
         data: courses,
@@ -190,8 +188,6 @@ class CourseController {
       return res.status(500).json({ message: "Server error" });
     }
   }
-  
-
 
   // Lấy khóa học theo ID
   async getById(req, res) {
@@ -266,7 +262,7 @@ class CourseController {
     const courseId = req.params.id;
 
     try {
-      const course = await Course.findById(courseId);
+      const course = await Course.findById(courseId).populate("organization");
       if (!course) {
         return res.status(404).json({ message: "Course not found" });
       }
@@ -274,14 +270,18 @@ class CourseController {
       // Kiểm tra xem có người dùng nào đã đăng ký khóa học này không
       const enrollments = await Enrollment.find({ course: courseId });
       if (enrollments.length > 0) {
-        return res
-          .status(400)
-          .json({
-            message: "Course cannot be deleted as there are students enrolled",
-          });
+        return res.status(400).json({
+          message: "Course cannot be deleted as there are students enrolled",
+        });
       }
 
       await Course.findByIdAndDelete(courseId);
+
+      const subject = "Your course has been deleted";
+      const message = `We regret to inform you that your course "${course.title}" has been deleted from our platform.\n\nIf you have any questions, please contact support.\n\nThank you.`;
+      // Gửi email thông báo
+      await sendEmail(course.organization.email, subject, message);
+
       return res.status(200).json({ message: "Course deleted successfully" });
     } catch (error) {
       console.error("Error deleting course:", error);
@@ -348,24 +348,25 @@ class CourseController {
         courseId,
         { isActive: true },
         { new: true } // Return the updated document
-      );
+      ).populate("organization");
 
       if (!updatedCourse) {
         return res.status(404).json({ message: "Course not found" });
       }
 
-      return res
-        .status(200)
-        .json({
-          message: "Course activated successfully",
-          course: updatedCourse,
-        });
+      const subject = "Your course has been activated";
+      const message = `Your course "${updatedCourse.title}" has been successfully activated and is now available for students.\n\nThank you for your contribution!`;
+      await sendEmail(updatedCourse.organization.email, subject, message);
+
+      return res.status(200).json({
+        message: "Course activated successfully and notification email sent",
+        course: updatedCourse,
+      });
     } catch (error) {
       console.error("Error activating course:", error);
       return res.status(500).json({ message: "Server error" });
     }
   }
-
 
   async countCourses(req, res) {
     try {
@@ -376,7 +377,6 @@ class CourseController {
       return res.status(500).json({ message: "Server error" });
     }
   }
-
 }
 
 module.exports = new CourseController();
